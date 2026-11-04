@@ -585,6 +585,23 @@ footer .bot button{color:inherit;font-size:13px}
 }
 @media(max-width:360px){.hero h1{font-size:34px}h2{font-size:25px}.kv b{font-size:24px}}
 </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1808143216895467');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1808143216895467&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
 <script>document.documentElement.classList.add('js');</script>
@@ -1009,6 +1026,7 @@ function waLink(kind,u){
  else msg=t('waGen');
  return 'https://wa.me/'+PHONE+'?text='+encodeURIComponent(msg);
 }
+function px(ev,data){try{if(window.fbq)fbq('track',ev,data||{})}catch(e){}}
 function refreshWa(){$$('[data-wa]').forEach(a=>{a.href=waLink(a.dataset.wa,curUnit)});}
 </script>
 <script>
@@ -1167,7 +1185,7 @@ function setFloor(f){curFloor=f;renderPanel();hoverFloor(null);$('#tip').style.o
 
 /* ---- drawer ---- */
 let drTab='plan';
-function openUnit(id){lpush('unit');curUnit=U(id);drTab='plan';renderDrawer();$('#drawer').classList.add('open');$('#ov').classList.add('open');document.body.style.overflow='hidden';refreshWa();$('#drawer').scrollTop=0;}
+function openUnit(id){lpush('unit');curUnit=U(id);px('ViewContent',{content_name:id,content_category:curUnit.type,content_type:'product'});drTab='plan';renderDrawer();$('#drawer').classList.add('open');$('#ov').classList.add('open');document.body.style.overflow='hidden';refreshWa();$('#drawer').scrollTop=0;}
 CLOSERS.unit=()=>{$('#drawer').classList.remove('open');$('#ov').classList.remove('open');document.body.style.overflow='';};
 function closeUnit(){if($('#drawer').classList.contains('open'))lclose('unit',CLOSERS.unit);}
 $('#drX').onclick=closeUnit;$('#ov').onclick=closeUnit;
@@ -1277,19 +1295,20 @@ async function saveLead(data){
   return true;}catch(e){console.warn('lead',e);return false;}
 }
 $('#leadF').onsubmit=async e=>{e.preventDefault();const ph=$('#lPhone').value.trim();if(!validPhone(ph)){$('#lErr').classList.add('show');return;}$('#lErr').classList.remove('show');
- UNLOCK=true;SS.set('gonio_lead','1');LS.set('gonio_lead','1');
+ UNLOCK=true;SS.set('gonio_lead','1');LS.set('gonio_lead','1');px('Lead',{content_name:'price_unlock',content_category:leadCtx});
  const bt=$('#leadF button[type=submit]');bt.disabled=true;await saveLead({name:$('#lName').value.trim(),phone:ph,ctx:leadCtx,unit:curUnit?.id||calc.unit,plan:calc.plan});bt.disabled=false;
  closeLead();toast(t('unlocked'));renderCalc();if($('#drawer').classList.contains('open'))renderDrawer();
  if(leadCtx==='schedule')window.open(waLink('schedule'),'_blank','noopener');
 };
 $('#cForm').onsubmit=async e=>{e.preventDefault();const ph=$('#fPhone').value.trim();if(!validPhone(ph)){$('#fErr').classList.add('show');return;}$('#fErr').classList.remove('show');
- await saveLead({name:$('#fName').value.trim(),phone:ph,ctx:'contact',topic:$('#fTopic').value,msg:$('#fMsg').value.trim(),unit:calc.unit});
+ px('Lead',{content_name:'contact_form',content_category:$('#fTopic').value});await saveLead({name:$('#fName').value.trim(),phone:ph,ctx:'contact',topic:$('#fTopic').value,msg:$('#fMsg').value.trim(),unit:calc.unit});
  UNLOCK=true;SS.set('gonio_lead','1');LS.set('gonio_lead','1');renderCalc();
  const a=$('#fOk a');a.href='https://wa.me/'+PHONE+'?text='+encodeURIComponent(t('waGen')+' '+($('#fName').value.trim()?'('+$('#fName').value.trim()+') ':'')+$('#fMsg').value.trim());
  $('#fOk').classList.add('show');};
 bindLead(document);
 
 /* ---- phone copy ---- */
+document.addEventListener('click',e=>{const a=e.target.closest('a[href*="wa.me"]');if(a)px('Contact',{content_name:'WhatsApp',content_category:a.dataset.wa||'unit'});},true);
 $('#copyPhone').onclick=async()=>{const v='+995 591 29 44 88';try{await navigator.clipboard.writeText(v);toast(t('copied'));}catch(e){const r=document.createRange();r.selectNodeContents($('#phone'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast(v);}};
 
 /* ---- faq ---- */
