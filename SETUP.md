@@ -17,7 +17,7 @@
 
 ## 2. GitHub Pages
 რეპოზიტორია → **Settings → Pages** → Source: *Deploy from a branch* → `main` / root → Save.
-რამდენიმე წუთში საიტი გაიხსნება: `https://<username>.github.io/<repo>/`
+რამდენიმე წუთში საიტი გაიხსნება: `https://4tressgonio.ge/`
 
 ## 3. საკუთარი დომენი (არასავალდებულო)
 1. Settings → Pages → Custom domain → მაგ. `4tressgonio.ge` → Save.
