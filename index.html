@@ -878,9 +878,9 @@ const PXD='T1Y8VFFJBUVFVkNLGFY8V1FJDEJBVUdfFjpBR0lCBExDV0tfFjpGR0lCBUNBVUtfFjpHR
 const PHONE='995591294488';
 const ROMAN=['','I','II','III','IV','V','VI','VII','VIII'];
 const TYPES={
- corner:{total:52.6,interior:37.7,balcony:14.9,beds:1,iso:'iso-52',plan:'typ',rooms:[['rLK',18.0],['rBed',9.9],['rBath',4.5],['rBal',14.9]],imgs:['i52-living','i52-sofa','i52-bed','i52-kitchen','i52-bath','i52-lounge']},
- inner:{total:49.6,interior:32.0,balcony:17.6,beds:0,iso:'iso-49',plan:'typ',rooms:[['rStudio',25.9],['rBath',3.0],['rBal',17.6]],imgs:['i49-living','i49-bed','i49-bath']},
- pent:{total:101.8,interior:69.3,balcony:32.5,beds:2,iso:'iso-101',plan:'pent',rooms:[['rLK',22.1],['rBed',13.4],['rBed',12.6],['rHall',9.8],['rBath',4.4],['rBal',14.9],['rBal',17.6]],imgs:['i52-living','i52-bed','i52-lounge','i52-bath']}
+ corner:{total:52.6,interior:38.2,balcony:14.4,beds:1,iso:'iso-52',plan:'typ',rooms:[['rLK',18.0],['rBed',9.9],['rBath',4.5],['rBal',14.4]],imgs:['i52-living','i52-sofa','i52-bed','i52-kitchen','i52-bath','i52-lounge']},
+ inner:{total:49.6,interior:43.3,balcony:6.3,beds:0,iso:'iso-49',plan:'typ',rooms:[['rStudio',25.9],['rBath',3.0],['rBal',6.3]],imgs:['i49-living','i49-bed','i49-bath']},
+ pent:{total:101.8,interior:83.1,balcony:18.7,beds:2,iso:'iso-101',plan:'pent',rooms:[['rLK',22.1],['rBed',13.4],['rBed',12.6],['rHall',9.8],['rBath',4.4],['rBal',18.7]],imgs:['i52-living','i52-bed','i52-lounge','i52-bath']}
 };
 const POLY={typ:{w:1440,h:1625,p:{1:[[36,231],[583,231],[583,516],[504,516],[504,625],[425,625],[425,1054],[36,1054]],2:[[36,1054],[425,1054],[425,869],[708,869],[708,1507],[36,1507]],3:[[1390,1507],[717,1507],[717,869],[1001,869],[1001,1054],[1390,1054]],4:[[1390,1054],[1001,1054],[1001,625],[922,625],[922,516],[842,516],[842,231],[1390,231]]}},
  pent:{w:1856,h:1625,p:{1:[[751,797],[895,797],[895,1594],[55,1594],[55,47],[751,47]],2:[[1105,47],[1801,47],[1801,1594],[962,1594],[962,797],[1105,797]]}}};
@@ -889,7 +889,9 @@ for(let f=1;f<=8;f++){
  if(f<=6){for(let p=1;p<=4;p++)UNITS.push({id:'N'+((f-1)*4+p),n:(f-1)*4+p,floor:f,pos:p,type:(p===1||p===4)?'corner':'inner',status:'free',price:null});}
  else{for(let p=1;p<=2;p++)UNITS.push({id:'N'+(24+(f-7)*2+p),n:24+(f-7)*2+p,floor:f,pos:p,type:'pent',status:'free',price:null});}
 }
-const SET={offerOn:true,offerLeft:4,offerTotal:4,offerMonths:24,downPct:30,months:24,fullDiscount:0,monthly:1500};
+const SET={offerOn:true,offerLeft:4,offerTotal:4,offerMonths:24,downPct:30,months:24,fullDiscount:0,monthly:1500,handY:2027,handM:12};
+/* plan A: 0 until handover, then instalments for the rest of the 24-month term */
+function aMonths(){const d=new Date();const until=(SET.handY-d.getFullYear())*12+(SET.handM-1-d.getMonth());return Math.max(1,SET.months-Math.max(0,until));}
 const GAL=['n-sea','i52-living','n-mount','i49-bed','c-balsea','i52-kitchen','n-front','i52-bed','c-roof','i49-living','x-tall','i52-sofa','c-person','i52-bath','c-entrance','i49-bath','c-corner','d-kitchen','c-junction','d-pillow','c-glass'];
 
 /* ============ I18N ============ */
@@ -931,7 +933,7 @@ pickUnit:['დააჭირეთ ბინას გეგმაზე ან
 ty_corner:['კუთხის ბინა','Corner home','Угловая квартира'],ty_inner:['ბინა-სტუდიო','Studio home','Квартира-студия'],ty_pent:['პენტჰაუსი','Penthouse','Пентхаус'],
 tyOver:['ბინის ტიპები','Home types','Типы квартир'],tyH:['შეარჩიეთ თქვენთვის სასურველი აპარტამენტი.','Choose the apartment that suits you.','Выберите квартиру, которая подходит именно вам.'],
 tyD_corner:['ერთსაძინებლიანი ბინა სახლის კუთხეში — ფართო აივნით და ორმხრივი განათებით.','A one-bedroom corner home with a generous balcony and light from two sides.','Квартира с одной спальней на углу дома — с просторным балконом и светом с двух сторон.'],
-tyD_inner:['ღია სივრცე საცხოვრებლად და დასაძინებლად — და 17.6 მ² აივანი, რომელიც კიდევ ერთ ოთახად იქცევა.','An open plan for living and sleeping — with a 17.6 m² balcony that becomes another room.','Открытое пространство для жизни и сна — и балкон 17,6 м², который становится ещё одной комнатой.'],
+tyD_inner:['ღია სივრცე საცხოვრებლად და დასაძინებლად — 43.3 მ² საცხოვრებელი ფართი და აივანი ზღვის ხედით.','An open plan for living and sleeping — 43.3 m² of living space plus a balcony.','Открытое пространство для жизни и сна — 43,3 м² жилой площади и балкон.'],
 tyD_pent:['ორსაძინებლიანი პენტჰაუსი ზედა სართულებზე — ორი აივნით და აუზთან ერთი სართულით ახლოს.','A two-bedroom penthouse on the top floors — two balconies, one flight from the pool.','Пентхаус с двумя спальнями на верхних этажах — два балкона и бассейн этажом выше.'],
 aTotal:['სულ ფართი','Total area','Общая площадь'],aInt:['საცხოვრებელი','Interior','Жилая'],aBal:['აივანი','Balcony','Балкон'],aBeds:['საძინებელი','Bedrooms','Спальни'],studio:['სტუდიო','studio','студия'],
 floorsOf:['სართულები','Floors','Этажи'],seeHomes:['ბინების ნახვა','See homes','Смотреть квартиры'],
@@ -941,14 +943,14 @@ plD:['ინდივიდუალური პირობების შე
 plDp:['გრაფიკს, შენატანებსა და ვადებს პერსონალური მენეჯერი შეგითანხმებთ — თქვენს შესაძლებლობებსა და გეგმებზე მორგებით.','A personal manager will agree the schedule, instalments and timing with you — shaped around your means and plans.','Персональный менеджер согласует с вами график, взносы и сроки — с учётом ваших возможностей и планов.'],
 payP:['ბანკის პროცენტის გარეშე — პირდაპირ დეველოპერთან. აირჩიეთ გეგმა, ნახეთ გრაფიკი, ან შეგვითანხმეთ ინდივიდუალური პირობები.','No bank interest — directly with the developer. Choose a plan, see the schedule, or agree personal terms with us.','Без банковских процентов — напрямую с застройщиком. Выберите план, посмотрите график или согласуйте индивидуальные условия.'],
 plAs:['ახლა · ჩაბარებამდე — არაფერი','now · nothing until handover','сейчас · до сдачи — ничего'],plBs:['პროცენტის გარეშე','no interest','без процентов'],plCs:['ერთიანი გადახდა','single payment','единовременно'],plA:['ნახევარი ახლა, ნახევარი — ჩაბარების შემდეგ','Half now, half after handover','Половина сейчас, половина после сдачи'],
-plAp:['იხდით ღირებულების ნახევარს და რემონტის დასრულებამდე მეტს არაფერს. დარჩენილ 50%-ს ფარავთ 0%-იანი შიდა განვადებით.','Pay half the price and nothing more until the works are finished. The remaining 50% goes into 0% in-house instalments.','Вы платите половину стоимости и больше ничего до завершения ремонта. Оставшиеся 50% — в рассрочку 0% от застройщика.'],
+plAp:['იხდით ღირებულების ნახევარს და სანამ ბინას გარემონტებულს ჩაიბარებთ, მეტს არაფერს. შემდეგ 2-წლიანი განვადების დარჩენილ თვეებში იხდით თვეში $1,500-მდე, ნაშთს კი ბოლოს ფარავთ.','Pay half the price and nothing more until you receive the finished home. Then, for the rest of the 2-year term, pay up to $1,500 a month and settle the balance at the end.','Вы платите половину стоимости и больше ничего до получения квартиры с ремонтом. Затем до конца 2-летнего срока — до $1,500 в месяц, а остаток погашаете в конце.'],
 plAl1:['მხოლოდ პირველი 4 ბინისთვის','For the first 4 homes only','Только для первых 4 квартир'],plAl2:['0 გადასახადი ჩაბარებამდე (2027 წლის დეკემბერი)','Zero payments until handover (December 2027)','Ноль платежей до сдачи (декабрь 2027)'],
 plB:['0%-იანი შიდა განვადება','0% in-house instalments','Рассрочка 0% от застройщика'],
 plBp:['პირველადი შენატანი, შემდეგ ყოველთვიურად $1,500, დარჩენილ თანხას კი ბოლოს ერთიანად ფარავთ. პროცენტისა და ბანკის გარეშე.','A down payment, then $1,500 a month, with the balance paid in one final payment. No interest, no bank.','Первый взнос, затем $1,500 в месяц, а остаток — одним последним платежом. Без процентов и без банка.'],
 plBl1:['ხელმისაწვდომია ყველა ბინაზე','Available on every home','Доступно для всех квартир'],plBl2:['ფიქსირებული ყოველთვიური გადასახადი: $1,500','Fixed monthly payment: $1,500','Фиксированный ежемесячный платёж: $1,500'],
 plC:['სრული გადახდა','Full payment','Полная оплата'],
-plCp:['მარტივი გარიგება და ინდივიდუალური პირობები პერსონალური მენეჯერისგან.','One payment — a simple deal and personal terms from a manager.','Единовременная оплата — простая сделка и персональные условия от менеджера.'],
-plCl1:['ინდივიდუალური პირობები','Personal terms','Индивидуальные условия'],plCl2:['ჯავშანი — მენეჯერთან ერთად','Reserve with a manager','Бронь через менеджера'],
+plCp:['სრული გადახდისას გთავაზობთ სპეციალურ პირობებს — დეტალებს პერსონალური მენეჯერი შეგითანხმებთ.','Pay in full and get special terms — your personal manager will agree the details with you.','При полной оплате — специальные условия. Детали согласует ваш персональный менеджер.'],
+plCl1:['სპეციალური პირობები 100%-იან გადახდაზე','Special terms for 100% payment','Специальные условия при оплате 100%'],plCl2:['ჯავშანი — მენეჯერთან ერთად','Reserve with a manager','Бронь через менеджера'],
 left:['დარჩა','left','осталось'],months:['თვე','months','мес.'],mo:['თვე','mo','мес.'],downPay:['პირველადი შენატანი','down payment','первый взнос'],
 calcH:['გადახდის კალკულატორი','Payment calculator','Калькулятор оплаты'],calcUnit:['ბინა','Home','Квартира'],calcPlan:['გადახდის გეგმა','Payment plan','План оплаты'],
 calcTotal:['ბინის ღირებულება','Price of the home','Стоимость квартиры'],
@@ -956,6 +958,7 @@ lockP:['შეიყვანეთ თქვენი ნომერი და
 lockB:['ფასის ნახვა','Show prices','Показать цены'],
 calcNote:['გაანგარიშება საორიენტაციოა. საბოლოო პირობები ფიქსირდება ხელშეკრულებით.','The calculation is indicative. Final terms are fixed in the contract.','Расчёт ориентировочный. Окончательные условия фиксируются в договоре.'],
 cond:['მდგომარეობა','Condition','Состояние'],fullFin:['სრული რემონტით','fully finished','с полным ремонтом'],
+plAl3:['შემდეგ — თვეში $1,500-მდე, ნაშთი ბოლოს','Then up to $1,500 a month, balance at the end','Затем до $1,500 в месяц, остаток в конце'],
 rFinal:['ბოლო გადახდა (ნაშთი)','Final payment (balance)','Последний платёж (остаток)'],rateN:['ეროვნული ბანკის კურსი','National Bank of Georgia rate','Курс Нацбанка Грузии'],
 rToday:['დღეს','Today','Сегодня'],rUntil:['ჩაბარებამდე (2027 წლის დეკემბერი)','Until handover (December 2027)','До сдачи (декабрь 2027)'],rAfter:['შემდეგ, ყოველთვიურად','Then, monthly','Затем ежемесячно'],rDown:['პირველადი შენატანი','Down payment','Первый взнос'],rMonthly:['ყოველთვიურად','Monthly','Ежемесячно'],rOnce:['ერთიანი გადახდა','Single payment','Единовременно'],rDisc:['ფასდაკლება','Discount','Скидка'],
 tlNow:['დღეს','Today','Сегодня'],tlJan:['დეკემბერი 2027','December 2027','Декабрь 2027'],
@@ -987,7 +990,7 @@ fOver:['კითხვები','Questions','Вопросы'],fH:['ხში�
 q1:['როდის ბარდება სახლი?','When is the handover?','Когда сдача дома?'],a1:['2027 წლის დეკემბერში. ყველა ბინა ბარდება სრული რემონტით.','In December 2027. Every home is delivered fully finished.','В декабре 2027 года. Все квартиры сдаются с полным ремонтом.'],
 q2:['შედის თუ არა ავეჯი და ტექნიკა?','Are furniture and appliances included?','Входят ли мебель и техника?'],a2:['არა. ბინა ბარდება სრული რემონტით, ავეჯსა და ტექნიკას კი თქვენი გემოვნებით შეარჩევთ.','No. The home is fully finished; furniture and appliances are yours to choose.','Нет. Квартира сдаётся с полным ремонтом, мебель и технику вы выбираете сами.'],
 q3:['როგორ მუშაობს 0%-იანი განვადება?','How do the 0% instalments work?','Как работает рассрочка 0%?'],a3:['იხდით პირველად შენატანს, შემდეგ 24 თვის განმავლობაში ყოველთვიურად $1,500-ს, დარჩენილ თანხას კი ბოლოს ერთიანად ფარავთ. პროცენტისა და ბანკის გარეშე, პირდაპირ დეველოპერთან.','You make a down payment, then pay $1,500 a month for 24 months and settle the balance in one final payment — no interest, no bank, directly with the developer.','Вы вносите первый взнос, затем 24 месяца платите по $1,500, а остаток погашаете последним платежом — без процентов и без банка, напрямую застройщику.'],
-q4:['რა არის 50%-იანი შეთავაზება?','What is the 50% offer?','Что за предложение 50%?'],a4:['იხდით ღირებულების 50%-ს და რემონტის დასრულებამდე მეტს არაფერს. შემდეგ დარჩენილ ნახევარს იხდით 0%-იანი შიდა განვადებით. შეთავაზება ვრცელდება მხოლოდ პირველ 4 ბინაზე.','You pay 50% of the price and nothing more until the works are done. Then you pay the other half in 0% in-house instalments. The offer applies to the first 4 homes only.','Вы платите 50% стоимости и больше ничего до завершения ремонта. Затем оставшуюся половину — в рассрочку 0% от застройщика. Предложение действует только для первых 4 квартир.'],
+q4:['რა არის 50%-იანი შეთავაზება?','What is the 50% offer?','Что за предложение 50%?'],a4:['იხდით ღირებულების 50%-ს და რემონტის დასრულებამდე, ბინის ჩაბარებამდე, მეტს არაფერს. შემდეგ 0%-იან შიდა განვადებას აგრძელებთ თვეში $1,500-მდე, 2-წლიანი ვადის ბოლომდე, დარჩენილ თანხას კი ბოლოს ფარავთ. მაგალითად, თუ ჩაბარებამდე 6 თვეა, შემდეგ 18 თვე იხდით. შეთავაზება ვრცელდება მხოლოდ პირველ 4 ბინაზე.','You pay 50% of the price and nothing more until the finished home is handed over. Then you continue with 0% in-house instalments of up to $1,500 a month until the end of the 2-year term, and settle the balance at the end. For example, if handover is 6 months away, you then pay for 18 months. The offer applies to the first 4 homes only.','Вы платите 50% стоимости и больше ничего до сдачи квартиры с ремонтом. Затем продолжаете рассрочку 0% — до $1,500 в месяц до конца 2-летнего срока, а остаток погашаете в конце. Например, если до сдачи 6 месяцев, далее вы платите 18 месяцев. Предложение действует только для первых 4 квартир.'],
 q5:['ვინ სარგებლობს აუზით?','Who can use the pool?','Кто пользуется бассейном?'],a5:['სახურავის აუზი და ტერასა სახლის ყველა მცხოვრების საერთო სივრცეა.','The rooftop pool and terrace are shared by all residents of the house.','Бассейн и терраса на крыше — общее пространство для всех жильцов дома.'],
 q6:['შემიძლია ობიექტის ნახვა?','Can I visit the site?','Можно посмотреть объект?'],a6:['დიახ. დაგვიკავშირდით 11:00–19:00 საათებში და მენეჯერი დაგეგმავს ვიზიტს.','Yes. Contact us between 11:00 and 19:00 and a manager will arrange a visit.','Да. Свяжитесь с нами с 11:00 до 19:00, и менеджер организует визит.'],
 ctOver:['დაგვიკავშირდით','Get in touch','Свяжитесь с нами'],copy:['ნომრის კოპირება','Copy number','Скопировать номер'],copied:['ნომერი დაკოპირდა','Number copied','Номер скопирован'],
@@ -1216,8 +1219,8 @@ function planSvg(u){const pl=u.type==='pent'?'pent':'typ',G=POLY[pl];const other
  return `<div class="plan"><img src="a/plan-${pl}.webp" alt="" width="${G.w}" height="${G.h}"><svg viewBox="0 0 ${G.w} ${G.h}">${others.map(o=>`<polygon points="${G.p[o.pos].map(p=>p.join(',')).join(' ')}" fill="#F5F1E8" fill-opacity=".78"/>`).join('')}<polygon points="${G.p[u.pos].map(p=>p.join(',')).join(' ')}" fill="#7FA08A" fill-opacity=".14" stroke="#1F3B2D" stroke-width="7"/></svg></div>`;}
 function payNums(u,plan){
  const p=u.price||0,S=SET;
- const inst=(rest,m)=>{const k=Math.min(m,Math.floor(rest/S.monthly));return [k,S.monthly,rest-k*S.monthly];};
- if(plan==='A'){const a=p*.5,[k,mo,fin]=inst(p-a,S.offerMonths);const r=[['rToday',a,'50%'],['rUntil',0,'0%'],['rAfter',mo,`× ${k}`]];if(fin>0)r.push(['rFinal',fin,'']);return {rows:r,total:p};}
+ const inst=(rest,m)=>{const mo=Math.min(S.monthly,rest/m);const k=Math.min(m,Math.floor(rest/mo+1e-9));return [k,mo,Math.max(0,rest-k*mo)];};
+ if(plan==='A'){const a=p*.5,[k,mo,fin]=inst(p-a,aMonths());const r=[['rToday',a,'50%'],['rUntil',0,'0%'],['rAfter',mo,`× ${k}`]];if(fin>0)r.push(['rFinal',fin,'']);return {rows:r,total:p};}
  if(plan==='B'){const dn=p*S.downPct/100,[k,mo,fin]=inst(p-dn,S.months);const r=[['rDown',dn,S.downPct+'%'],['rMonthly',mo,`× ${k}`]];if(fin>0)r.push(['rFinal',fin,'']);return {rows:r,total:p};}
  const disc=p*(S.fullDiscount||0)/100;const r=[['rOnce',p-disc,'100%']];if(disc>0)r.push(['rDisc',disc,'−'+S.fullDiscount+'%']);return {rows:r,total:p-disc};
 }
@@ -1270,7 +1273,7 @@ function planLabel(p){return t('planName')+': '+(p==='A'?t('plA'):p==='B'?t('plB
 function renderPlans(){
  const A=SET.offerOn&&SET.offerLeft>0;
  $('#plans').innerHTML=`
- <div class="pc ${calc.plan==='A'?'on':''}" data-p="A" style="${A?'':'opacity:.55'}">${A?`<span class="badge">${t('left')} ${SET.offerLeft} / ${SET.offerTotal}</span>`:''}<div class="big">50%<small>${t('plAs')}</small></div><h3>${t('plA')}</h3><p>${t('plAp')}</p><ul><li>${A?t('plAl1'):t('offerOff')}</li><li>${t('plAl2')}</li><li>${t('rAfter')}: 0% · ${SET.offerMonths} ${t('months')}</li></ul></div>
+ <div class="pc ${calc.plan==='A'?'on':''}" data-p="A" style="${A?'':'opacity:.55'}">${A?`<span class="badge">${t('left')} ${SET.offerLeft} / ${SET.offerTotal}</span>`:''}<div class="big">50%<small>${t('plAs')}</small></div><h3>${t('plA')}</h3><p>${t('plAp')}</p><ul><li>${A?t('plAl1'):t('offerOff')}</li><li>${t('plAl2')}</li><li>${t('plAl3')}</li></ul></div>
  <div class="pc ${calc.plan==='B'?'on':''}" data-p="B"><div class="big">0%<small>${SET.months} ${t('months')} · ${t('plBs')}</small></div><h3>${t('plB')}</h3><p>${t('plBp')}</p><ul><li>${t('downPay')}: ${SET.downPct}%</li><li>${t('plBl1')}</li><li>${t('plBl2')}</li></ul></div>
  <div class="pc ${calc.plan==='C'?'on':''}" data-p="C"><div class="big">100%<small>${SET.fullDiscount?'−'+SET.fullDiscount+'% · ':''}${t('plCs')}</small></div><h3>${t('plC')}</h3><p>${t('plCp')}</p><ul><li>${t('plCl1')}</li><li>${t('plCl2')}</li></ul></div>
  <div class="pc ind"><div class="big">1:1<small>${t('plDs')}</small></div><h3>${t('plD')}</h3><p>${t('plDp')}</p><div class="acts"><a class="btn btn-p" data-wa="schedule" target="_blank" rel="noopener" href="${waLink('schedule')}">${t('indB')}</a><button class="btn btn-l" data-lead="schedule">${t('indB2')}</button></div></div>`;
@@ -1295,7 +1298,7 @@ function renderCalc(){
  $('#cTotal').textContent=lk?'$000,000':fmt(n.total);
  // timeline
  let segs,lbl;
- if(calc.plan==='A'){segs=[[50,'var(--man)'],[22,'var(--line2)'],[28,'var(--euc)']];lbl=[t('tlNow')+' · 50%',t('tlJan')+' · 0',`+${SET.offerMonths} ${t('mo')} · 50%`];}
+ if(calc.plan==='A'){segs=[[50,'var(--man)'],[22,'var(--line2)'],[28,'var(--euc)']];lbl=[t('tlNow')+' · 50%',t('tlJan')+' · 0',`+${aMonths()} ${t('mo')} · ${t('rFinal')}`];}
  else if(calc.plan==='B'){segs=[[SET.downPct,'var(--man)'],[100-SET.downPct,'var(--euc)']];lbl=[t('tlNow')+' · '+SET.downPct+'%',`${SET.months} × ${fmt(SET.monthly)}`,`+${SET.months} ${t('mo')} · ${t('rFinal')}`];}
  else {segs=[[100,'var(--man)']];lbl=[t('tlNow')+' · 100%','',''];}
  $('#cTl').innerHTML=`<div class="bar">${segs.map(s=>`<i style="flex:${s[0]};background:${s[1]}"></i>`).join('')}</div><div class="lbls">${lbl.map(l=>`<span>${l}</span>`).join('')}</div>`;
