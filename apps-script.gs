@@ -1,14 +1,16 @@
 /**
  * 4Tress Gonio — Google Sheets backend
- * 1) Extensions → Apps Script → paste this file → Save
+ * 1) script.google.com → New project → paste this file (SHEET_ID = the spreadsheet id) → Save
  * 2) Run `setup` once (approve permissions)
  * 3) Deploy → New deployment → Web app · Execute as: Me · Who has access: Anyone → Deploy
  * 4) Copy the Web app URL into index.html → const SHEET_URL='...'
  */
 const NOTIFY_EMAIL = ''; // optional: e-mail for new lead alerts
+const SHEET_ID = '1BJywi9Q4D8r9gJVd1G7-OQlIZe10_g99mhV7Svllpm0'; // 4Tress Gonio — ბინები და ლიდები
+const book_ = () => SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActive();
 
 function setup() {
-  const ss = SpreadsheetApp.getActive();
+  const ss = book_();
   let u = ss.getSheetByName('ბინები') || ss.insertSheet('ბინები');
   u.clear();
   u.appendRow(['ბინა','სართული','ტიპი','ფართი მ²','სტატუსი (free / reserved / sold)','ფასი $']);
@@ -21,9 +23,10 @@ function setup() {
    ['offerOn',true,'50%-იანი შეთავაზება ჩართულია (TRUE/FALSE)'],
    ['offerLeft',4,'50%-იანი შეთავაზებიდან დარჩენილი ბინები'],
    ['offerTotal',4,'50%-იანი შეთავაზების ბინები სულ'],
-   ['offerMonths',24,'50% — დარჩენილის განვადება, თვე'],
+   ['renoM',6,'50% — რემონტის პერიოდი (გადასახადის გარეშე), თვე'],
+   ['monthly',1500,'ყოველთვიური გადასახადი მაქს. $'],
    ['downPct',30,'0% განვადება — პირველადი შენატანი %'],
-   ['months',24,'0% განვადება — თვეები'],
+   ['months',24,'განვადების მთლიანი ვადა, თვე'],
    ['fullDiscount',0,'სრული გადახდის ფასდაკლება %']].forEach(r => s.appendRow(r));
   s.setFrozenRows(1); s.getRange('A1:C1').setFontWeight('bold');
   let l = ss.getSheetByName('ლიდები') || ss.insertSheet('ლიდები');
@@ -34,14 +37,14 @@ function setup() {
 function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 
 function state_() {
-  const ss = SpreadsheetApp.getActive();
+  const ss = book_();
   const units = ss.getSheetByName('ბინები').getDataRange().getValues().slice(1).map(r => ({id: r[0], status: String(r[4]).trim() || 'free'}));
   const settings = {}; ss.getSheetByName('პარამეტრები').getDataRange().getValues().slice(1).forEach(r => settings[r[0]] = r[1]);
   return {units, settings};
 }
 
 function prices_() {
-  const p = {}; SpreadsheetApp.getActive().getSheetByName('ბინები').getDataRange().getValues().slice(1).forEach(r => p[r[0]] = Number(r[5]));
+  const p = {}; book_().getSheetByName('ბინები').getDataRange().getValues().slice(1).forEach(r => p[r[0]] = Number(r[5]));
   return p;
 }
 
@@ -54,7 +57,7 @@ function doPost(e) {
   const clean = v => String(v || '').replace(/^[=+\-@]/, "'$&").slice(0, 500);
   const lock = LockService.getScriptLock(); lock.waitLock(10000);
   try {
-    SpreadsheetApp.getActive().getSheetByName('ლიდები').appendRow([new Date(), clean(d.name), "'" + phone, clean(d.ctx), clean(d.unit), clean(d.plan), clean(d.topic), clean(d.msg), clean(d.lang), clean(d.consent), clean(d.marketing), clean(d.consent_at)]);
+    book_().getSheetByName('ლიდები').appendRow([new Date(), clean(d.name), "'" + phone, clean(d.ctx), clean(d.unit), clean(d.plan), clean(d.topic), clean(d.msg), clean(d.lang), clean(d.consent), clean(d.marketing), clean(d.consent_at)]);
   } finally { lock.releaseLock(); }
   if (NOTIFY_EMAIL) try { MailApp.sendEmail(NOTIFY_EMAIL, '4Tress Gonio — ახალი ლიდი: ' + phone, [d.name, phone, d.ctx, d.unit, d.plan, d.topic, d.msg].filter(Boolean).join('\n')); } catch (err) {}
   return json_({ok: true, prices: prices_()});
