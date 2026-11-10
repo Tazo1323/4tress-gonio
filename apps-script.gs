@@ -27,7 +27,7 @@ function setup() {
    ['fullDiscount',0,'სრული გადახდის ფასდაკლება %']].forEach(r => s.appendRow(r));
   s.setFrozenRows(1); s.getRange('A1:C1').setFontWeight('bold');
   let l = ss.getSheetByName('ლიდები') || ss.insertSheet('ლიდები');
-  if (l.getLastRow() === 0) { l.appendRow(['თარიღი','სახელი','ტელეფონი','წყარო','ბინა','გეგმა','თემა','კომენტარი','ენა']); l.setFrozenRows(1); l.getRange('A1:I1').setFontWeight('bold'); }
+  if (l.getLastRow() === 0) { l.appendRow(['თარიღი','სახელი','ტელეფონი','წყარო','ბინა','გეგმა','თემა','კომენტარი','ენა','თანხმობა','WhatsApp მარკეტინგი','თანხმობის დრო']); l.setFrozenRows(1); l.getRange('A1:L1').setFontWeight('bold'); }
   const def = ss.getSheetByName('Sheet1') || ss.getSheetByName('ფურცელი1'); if (def && ss.getSheets().length > 3) ss.deleteSheet(def);
 }
 
@@ -54,7 +54,7 @@ function doPost(e) {
   const clean = v => String(v || '').replace(/^[=+\-@]/, "'$&").slice(0, 500);
   const lock = LockService.getScriptLock(); lock.waitLock(10000);
   try {
-    SpreadsheetApp.getActive().getSheetByName('ლიდები').appendRow([new Date(), clean(d.name), "'" + phone, clean(d.ctx), clean(d.unit), clean(d.plan), clean(d.topic), clean(d.msg), clean(d.lang)]);
+    SpreadsheetApp.getActive().getSheetByName('ლიდები').appendRow([new Date(), clean(d.name), "'" + phone, clean(d.ctx), clean(d.unit), clean(d.plan), clean(d.topic), clean(d.msg), clean(d.lang), clean(d.consent), clean(d.marketing), clean(d.consent_at)]);
   } finally { lock.releaseLock(); }
   if (NOTIFY_EMAIL) try { MailApp.sendEmail(NOTIFY_EMAIL, '4Tress Gonio — ახალი ლიდი: ' + phone, [d.name, phone, d.ctx, d.unit, d.plan, d.topic, d.msg].filter(Boolean).join('\n')); } catch (err) {}
   return json_({ok: true, prices: prices_()});
