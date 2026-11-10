@@ -522,9 +522,6 @@ footer .bot button{color:inherit;font-size:13px}
 .chk{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;color:var(--ink2);margin:0 0 12px;cursor:pointer}
 .chk input{flex:none;width:18px;height:18px;margin-top:1px;accent-color:var(--acc);cursor:pointer}
 .chk a{color:var(--acc2);border-bottom:1px solid currentColor}
-.ckb{position:fixed;left:16px;right:16px;bottom:16px;z-index:90;max-width:560px;margin:0 auto;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:var(--shadow);display:none;font-size:14px;line-height:1.55}
-.ckb.show{display:block}.ckb a{color:var(--acc2);border-bottom:1px solid currentColor}
-.ckb .r{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}.ckb .btn{height:44px;padding:0 20px;font-size:14px}
 .ftl{color:inherit;border-bottom:1px solid rgba(245,241,232,.35);cursor:pointer;background:none;border-top:0;border-left:0;border-right:0;font:inherit;padding:0}
 .toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translate(-50%,200%);opacity:0;background:#111;color:#F5F1E8;padding:12px 20px;border-radius:999px;font-size:14px;z-index:99;transition:transform .45s cubic-bezier(.2,.8,.2,1);pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
 .toast.show{transform:translate(-50%,0);opacity:1}
@@ -592,12 +589,12 @@ footer .bot button{color:inherit;font-size:13px}
 }
 @media(max-width:360px){.hero h1{font-size:34px}h2{font-size:25px}.kv b{font-size:24px}}
 </style>
-<!-- Meta Pixel: loads only after cookie consent -->
+<!-- Meta Pixel -->
 <script>
 function loadPixel(){if(window.fbq)return;
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq('init','1808143216895467');fbq('track','PageView');}
-try{if(localStorage.getItem('gonio_ck')==='1')loadPixel();}catch(e){}
+loadPixel();
 </script>
 
 </head>
@@ -834,7 +831,7 @@ try{if(localStorage.getItem('gonio_ck')==='1')loadPixel();}catch(e){}
    <div><h4 data-i="ftNav"></h4><ul><li><a href="#residences" data-i="n2"></a></li><li><a href="#payment" data-i="n3"></a></li><li><a href="#gonio" data-i="n4"></a></li><li><a href="#gallery" data-i="n5"></a></li></ul></div>
    <div><h4 data-i="n6"></h4><ul><li>+995 591 29 44 88</li><li>11:00 – 19:00</li><li data-i="addr"></li><li><a href="https://www.facebook.com/4TressGonio" target="_blank" rel="noopener">Facebook</a></li></ul></div>
   </div>
-  <div class="bot"><span>© 2026 4Tress Gonio · <span data-i="legal"></span> · <a class="ftl" data-priv data-i="privL"></a> · <button class="ftl" id="ckOpen" data-i="ckSet"></button></span><span class="tbcm"><i class="tbcl"></i><span class="tbcp" data-i="partner"></span></span></div>
+  <div class="bot"><span>© 2026 4Tress Gonio · <span data-i="legal"></span> · <a class="ftl" data-priv data-i="privL"></a></span><span class="tbcm"><i class="tbcl"></i><span class="tbcp" data-i="partner"></span></span></div>
  </div>
 </footer>
 
@@ -866,7 +863,6 @@ try{if(localStorage.getItem('gonio_ck')==='1')loadPixel();}catch(e){}
 <div class="lb" id="lb"><button class="x" data-lb="x" aria-label="close"><svg viewBox="0 0 24 24" width="20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="p" data-lb="p" aria-label="prev"><svg viewBox="0 0 24 24" width="20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 6l-6 6 6 6"/></svg></button><img id="lbImg" alt=""><button class="n" data-lb="n" aria-label="next"><svg viewBox="0 0 24 24" width="20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 6l6 6-6 6"/></svg></button><div class="c" id="lbC"></div></div>
 
 <div class="toast" id="toast"></div>
-<div class="ckb" id="ckb" role="dialog" aria-live="polite"><div data-i="ckT" data-html></div><div class="r"><button class="btn btn-p" id="ckY" data-i="ckY"></button><button class="btn" id="ckN" data-i="ckN" style="border:1px solid var(--line2)"></button></div></div>
 
 <script>
 /* ============ DATA ============ */
@@ -999,9 +995,6 @@ cons1:['ვეთანხმები ჩემი სახელისა დ
 cons2:['თანახმა ვარ, WhatsApp-ით მივიღო ინფორმაცია აქციების, ფასებისა და სპეციალური შეთავაზებების შესახებ (არასავალდებულო, შეგიძლიათ ნებისმიერ დროს გააუქმოთ).','I agree to receive WhatsApp messages about promotions, prices and special offers (optional, you can opt out at any time).','Я согласен(на) получать в WhatsApp сообщения об акциях, ценах и специальных предложениях (необязательно, можно отказаться в любой момент).'],
 consErr:['გასაგრძელებლად მონიშნეთ თანხმობა მონაცემების დამუშავებაზე.','Please tick the data-processing consent to continue.','Чтобы продолжить, отметьте согласие на обработку данных.'],
 privL:['კონფიდენციალურობის პოლიტიკა','Privacy Policy','Политика конфиденциальности'],
-ckSet:['Cookie პარამეტრები','Cookie settings','Настройки cookie'],
-ckT:['ვიყენებთ Meta Pixel-ს (cookie), რომ გავზომოთ რეკლამის ეფექტიანობა. მას ჩავრთავთ მხოლოდ თქვენი თანხმობით. <a data-priv>დაწვრილებით</a>','We use Meta Pixel (cookies) to measure our advertising. It is switched on only with your consent. <a data-priv>Learn more</a>','Мы используем Meta Pixel (cookie), чтобы оценивать эффективность рекламы. Он включается только с вашего согласия. <a data-priv>Подробнее</a>'],
-ckY:['თანხმობა','Accept','Принять'],ckN:['უარი','Decline','Отклонить'],
 lmB:['ფასების ნახვა','Show prices','Показать цены'],lmNote:['11:00 – 19:00 · +995 591 29 44 88','11:00 – 19:00 · +995 591 29 44 88','11:00 – 19:00 · +995 591 29 44 88'],
 unlocked:['ფასები გახსნილია','Prices unlocked','Цены открыты'],
 ftP:['ბუტიკური საცხოვრებელი სახლი გონიოში, ზღვიდან 50 მეტრში. 28 ბინა, აუზი სახურავზე, ჩაბარება სრული რემონტით.','A boutique residence in Gonio, 50 metres from the sea. 28 homes, a rooftop pool, delivered fully finished.','Бутик-дом в Гонио, в 50 метрах от моря. 28 квартир, бассейн на крыше, сдача с полным ремонтом.'],
@@ -1306,11 +1299,6 @@ function applyPrices(){if(!UNLOCK)return;try{const b=atob(PXD),k='4tress';let o=
 function consentOk(px){const ok=$('#'+px+'C1').checked;$('#'+px+'CErr').classList.toggle('show',!ok);return ok;}
 function consentData(px){return{consent:'yes',marketing:$('#'+px+'C2').checked?'yes':'no',consent_at:new Date().toISOString()};}
 document.addEventListener('click',e=>{const a=e.target.closest('[data-priv]');if(a){e.preventDefault();window.open('privacy.html?l='+LANG,'_blank','noopener');}});
-function showCk(){$('#ckb').classList.add('show');}
-$('#ckY').onclick=()=>{LS.set('gonio_ck','1');$('#ckb').classList.remove('show');loadPixel();};
-$('#ckN').onclick=()=>{const was=LS.get('gonio_ck')==='1';LS.set('gonio_ck','0');$('#ckb').classList.remove('show');if(was)location.reload();};
-$('#ckOpen').onclick=showCk;
-if(LS.get('gonio_ck')===null)setTimeout(showCk,1200);
 async function saveLead(data){
  if(!SHEET_URL)return false;
  try{const r=await fetch(SHEET_URL,{method:'POST',body:JSON.stringify({...data,lang:LANG,page:location.href})});const j=await r.json();
