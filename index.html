@@ -519,6 +519,11 @@ footer .bot button{color:inherit;font-size:13px}
 .mbox .x{position:absolute;top:18px;right:18px}
 .err{color:#c0392b;font-size:13px;margin-top:-12px;margin-bottom:12px;display:none}
 .err.show{display:block}
+.cur{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.cur small{font-size:12px;color:var(--ink3)}
+.cs{display:inline-flex;border:1px solid var(--line2);border-radius:99px;padding:3px;gap:2px}
+.cs button{border-radius:99px;padding:5px 12px;font-size:13px;color:var(--ink2)}
+.cs button.on{background:var(--acc);color:var(--bg)}
 .chk{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;color:var(--ink2);margin:0 0 12px;cursor:pointer}
 .chk input{flex:none;width:18px;height:18px;margin-top:1px;accent-color:var(--acc);cursor:pointer}
 .chk a{color:var(--acc2);border-bottom:1px solid currentColor}
@@ -722,7 +727,7 @@ loadPixel();
     <div id="cUnitInfo" style="font-size:14px;color:var(--ink2)"></div>
    </div>
    <div class="cbox res locked" id="cRes">
-    <div class="rows" id="cRows"></div>
+    <div id="cCur"></div><div class="rows" id="cRows"></div>
     <div class="tl" id="cTl"></div>
     <div class="tot"><span data-i="calcTotal"></span><b id="cTotal">$000,000</b></div>
     <div class="lockcta"><p data-i="lockP"></p><button class="btn btn-p" data-lead="calc" data-i="lockB"></button></div>
@@ -884,7 +889,7 @@ for(let f=1;f<=8;f++){
  if(f<=6){for(let p=1;p<=4;p++)UNITS.push({id:'N'+((f-1)*4+p),n:(f-1)*4+p,floor:f,pos:p,type:(p===1||p===4)?'corner':'inner',status:'free',price:null});}
  else{for(let p=1;p<=2;p++)UNITS.push({id:'N'+(24+(f-7)*2+p),n:24+(f-7)*2+p,floor:f,pos:p,type:'pent',status:'free',price:null});}
 }
-const SET={offerOn:true,offerLeft:4,offerTotal:4,offerMonths:24,downPct:30,months:24,fullDiscount:0};
+const SET={offerOn:true,offerLeft:4,offerTotal:4,offerMonths:24,downPct:30,months:24,fullDiscount:0,monthly:1500};
 const GAL=['n-sea','i52-living','n-mount','i49-bed','c-balsea','i52-kitchen','n-front','i52-bed','c-roof','i49-living','x-tall','i52-sofa','c-person','i52-bath','c-entrance','i49-bath','c-corner','d-kitchen','c-junction','d-pillow','c-glass'];
 
 /* ============ I18N ============ */
@@ -939,8 +944,8 @@ plAs:['ახლა · ჩაბარებამდე — არაფერ�
 plAp:['იხდით ღირებულების ნახევარს და რემონტის დასრულებამდე მეტს არაფერს. დარჩენილ 50%-ს ფარავთ 0%-იანი შიდა განვადებით.','Pay half the price and nothing more until the works are finished. The remaining 50% goes into 0% in-house instalments.','Вы платите половину стоимости и больше ничего до завершения ремонта. Оставшиеся 50% — в рассрочку 0% от застройщика.'],
 plAl1:['მხოლოდ პირველი 4 ბინისთვის','For the first 4 homes only','Только для первых 4 квартир'],plAl2:['0 გადასახადი 2028 წლის იანვრამდე','Zero payments until January 2028','Ноль платежей до января 2028'],
 plB:['0%-იანი შიდა განვადება','0% in-house instalments','Рассрочка 0% от застройщика'],
-plBp:['პირველადი შენატანი და დარჩენილი თანხა — თანაბრად, ყოველთვიურად. პროცენტისა და ბანკის გარეშე.','A down payment, then equal monthly instalments. No interest, no bank.','Первый взнос, затем равные ежемесячные платежи. Без процентов и без банка.'],
-plBl1:['ხელმისაწვდომია ყველა ბინაზე','Available on every home','Доступно для всех квартир'],plBl2:['ყოველთვიური გადასახადი ფიქსირებულია','Fixed monthly payment','Фиксированный ежемесячный платёж'],
+plBp:['პირველადი შენატანი, შემდეგ ყოველთვიურად $1,500, დარჩენილ თანხას კი ბოლოს ერთიანად ფარავთ. პროცენტისა და ბანკის გარეშე.','A down payment, then $1,500 a month, with the balance paid in one final payment. No interest, no bank.','Первый взнос, затем $1,500 в месяц, а остаток — одним последним платежом. Без процентов и без банка.'],
+plBl1:['ხელმისაწვდომია ყველა ბინაზე','Available on every home','Доступно для всех квартир'],plBl2:['ფიქსირებული ყოველთვიური გადასახადი: $1,500','Fixed monthly payment: $1,500','Фиксированный ежемесячный платёж: $1,500'],
 plC:['სრული გადახდა','Full payment','Полная оплата'],
 plCp:['მარტივი გარიგება და ინდივიდუალური პირობები პერსონალური მენეჯერისგან.','One payment — a simple deal and personal terms from a manager.','Единовременная оплата — простая сделка и персональные условия от менеджера.'],
 plCl1:['ინდივიდუალური პირობები','Personal terms','Индивидуальные условия'],plCl2:['ჯავშანი — მენეჯერთან ერთად','Reserve with a manager','Бронь через менеджера'],
@@ -950,6 +955,7 @@ calcTotal:['ბინის ღირებულება','Price of the home',
 lockP:['შეიყვანეთ თქვენი ნომერი და ნახეთ აპარტამენტების ფასები.','Enter your number to see apartment prices.','Введите свой номер, чтобы увидеть цены на квартиры.'],
 lockB:['ფასის ნახვა','Show prices','Показать цены'],
 calcNote:['გაანგარიშება საორიენტაციოა. საბოლოო პირობები ფიქსირდება ხელშეკრულებით.','The calculation is indicative. Final terms are fixed in the contract.','Расчёт ориентировочный. Окончательные условия фиксируются в договоре.'],
+rFinal:['ბოლო გადახდა (ნაშთი)','Final payment (balance)','Последний платёж (остаток)'],rateN:['ეროვნული ბანკის კურსი','National Bank of Georgia rate','Курс Нацбанка Грузии'],
 rToday:['დღეს','Today','Сегодня'],rUntil:['2028 წლის იანვრამდე','Until January 2028','До января 2028'],rAfter:['შემდეგ, ყოველთვიურად','Then, monthly','Затем ежемесячно'],rDown:['პირველადი შენატანი','Down payment','Первый взнос'],rMonthly:['ყოველთვიურად','Monthly','Ежемесячно'],rOnce:['ერთიანი გადახდა','Single payment','Единовременно'],rDisc:['ფასდაკლება','Discount','Скидка'],
 tlNow:['დღეს','Today','Сегодня'],tlJan:['იანვარი 2028','January 2028','Январь 2028'],
 offerOff:['შეთავაზება ამოიწურა','Offer no longer available','Предложение закончилось'],
@@ -979,7 +985,7 @@ t3k:['ჩაბარება','Handover','Сдача'],t3:['სრული �
 fOver:['კითხვები','Questions','Вопросы'],fH:['ხშირად გვეკითხებიან.','What people ask.','Частые вопросы.'],
 q1:['როდის ბარდება სახლი?','When is the handover?','Когда сдача дома?'],a1:['2028 წლის იანვარში. ყველა ბინა ბარდება სრული რემონტით.','In January 2028. Every home is delivered fully finished.','В январе 2028 года. Все квартиры сдаются с полным ремонтом.'],
 q2:['შედის თუ არა ავეჯი და ტექნიკა?','Are furniture and appliances included?','Входят ли мебель и техника?'],a2:['არა. ბინა ბარდება სრული რემონტით, ავეჯსა და ტექნიკას კი თქვენი გემოვნებით შეარჩევთ.','No. The home is fully finished; furniture and appliances are yours to choose.','Нет. Квартира сдаётся с полным ремонтом, мебель и технику вы выбираете сами.'],
-q3:['როგორ მუშაობს 0%-იანი განვადება?','How do the 0% instalments work?','Как работает рассрочка 0%?'],a3:['იხდით პირველად შენატანს, დარჩენილ თანხას კი — თანაბრად, 24 თვის განმავლობაში. პროცენტისა და ბანკის გარეშე, პირდაპირ დეველოპერთან.','You make a down payment and pay the rest in equal parts over 24 months — no interest, no bank, directly with the developer.','Вы вносите первый взнос, а остаток платите равными частями 24 месяца — без процентов и без банка, напрямую застройщику.'],
+q3:['როგორ მუშაობს 0%-იანი განვადება?','How do the 0% instalments work?','Как работает рассрочка 0%?'],a3:['იხდით პირველად შენატანს, შემდეგ 24 თვის განმავლობაში ყოველთვიურად $1,500-ს, დარჩენილ თანხას კი ბოლოს ერთიანად ფარავთ. პროცენტისა და ბანკის გარეშე, პირდაპირ დეველოპერთან.','You make a down payment, then pay $1,500 a month for 24 months and settle the balance in one final payment — no interest, no bank, directly with the developer.','Вы вносите первый взнос, затем 24 месяца платите по $1,500, а остаток погашаете последним платежом — без процентов и без банка, напрямую застройщику.'],
 q4:['რა არის 50%-იანი შეთავაზება?','What is the 50% offer?','Что за предложение 50%?'],a4:['იხდით ღირებულების 50%-ს და რემონტის დასრულებამდე მეტს არაფერს. შემდეგ დარჩენილ ნახევარს იხდით 0%-იანი შიდა განვადებით. შეთავაზება ვრცელდება მხოლოდ პირველ 4 ბინაზე.','You pay 50% of the price and nothing more until the works are done. Then you pay the other half in 0% in-house instalments. The offer applies to the first 4 homes only.','Вы платите 50% стоимости и больше ничего до завершения ремонта. Затем оставшуюся половину — в рассрочку 0% от застройщика. Предложение действует только для первых 4 квартир.'],
 q5:['ვინ სარგებლობს აუზით?','Who can use the pool?','Кто пользуется бассейном?'],a5:['სახურავის აუზი და ტერასა სახლის ყველა მცხოვრების საერთო სივრცეა.','The rooftop pool and terrace are shared by all residents of the house.','Бассейн и терраса на крыше — общее пространство для всех жильцов дома.'],
 q6:['შემიძლია ობიექტის ნახვა?','Can I visit the site?','Можно посмотреть объект?'],a6:['დიახ. დაგვიკავშირდით 11:00–19:00 საათებში და მენეჯერი დაგეგმავს ვიზიტს.','Yes. Contact us between 11:00 and 19:00 and a manager will arrange a visit.','Да. Свяжитесь с нами с 11:00 до 19:00, и менеджер организует визит.'],
@@ -1023,7 +1029,13 @@ const capT=k=>LANG==='ka'?MT(t(k)):t(k);
 const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const SS={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}};
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const fmt=n=>'$'+Math.round(n).toLocaleString('en-US');
+let CUR=LS.get('gonio_cur')==='GEL'?'GEL':'USD',RATE=null,RATE_D='';
+try{const c=JSON.parse(LS.get('gonio_rate')||'null');if(c&&c.r){RATE=c.r;RATE_D=c.d;}}catch(e){}
+if(!RATE)CUR='USD';
+const fmt=n=>(CUR==='GEL'&&RATE)?Math.round(n*RATE).toLocaleString('en-US')+' ₾':'$'+Math.round(n).toLocaleString('en-US');
+function curSw(){if(!RATE)return'';return `<div class="cur"><div class="cs"><button data-cur="USD" class="${CUR==='USD'?'on':''}">$ USD</button><button data-cur="GEL" class="${CUR==='GEL'?'on':''}">₾ GEL</button></div><small>${t('rateN')}: 1 $ = ${RATE.toFixed(4)} ₾ · ${RATE_D}</small></div>`;}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cur]');if(!b)return;CUR=b.dataset.cur;LS.set('gonio_cur',CUR);renderAll();});
+async function loadRate(){try{const j=await fetch('https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/en/json/?currencies=USD').then(r=>r.json());const c=j[0].currencies[0];const d=new Date(c.validFromDate||j[0].date);RATE=+c.rate;RATE_D=String(d.getUTCDate()).padStart(2,'0')+'.'+String(d.getUTCMonth()+1).padStart(2,'0')+'.'+d.getUTCFullYear();LS.set('gonio_rate',JSON.stringify({r:RATE,d:RATE_D}));if(LS.get('gonio_cur')==='GEL')CUR='GEL';renderAll();}catch(e){console.warn('rate',e);}}
 const fA=n=>(LANG==='ru'?String(n).replace('.',','):String(n));
 function toast(s){const el=$('#toast');el.textContent=s;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2600);}
 function waLink(kind,u){
@@ -1203,8 +1215,9 @@ function planSvg(u){const pl=u.type==='pent'?'pent':'typ',G=POLY[pl];const other
  return `<div class="plan"><img src="a/plan-${pl}.webp" alt="" width="${G.w}" height="${G.h}"><svg viewBox="0 0 ${G.w} ${G.h}">${others.map(o=>`<polygon points="${G.p[o.pos].map(p=>p.join(',')).join(' ')}" fill="#F5F1E8" fill-opacity=".78"/>`).join('')}<polygon points="${G.p[u.pos].map(p=>p.join(',')).join(' ')}" fill="#7FA08A" fill-opacity=".14" stroke="#1F3B2D" stroke-width="7"/></svg></div>`;}
 function payNums(u,plan){
  const p=u.price||0,S=SET;
- if(plan==='A'){const a=p*.5;return {rows:[['rToday',a,'50%'],['rUntil',0,'0%'],['rAfter',(p-a)/S.offerMonths,`× ${S.offerMonths}`]],total:p};}
- if(plan==='B'){const dn=p*S.downPct/100;return {rows:[['rDown',dn,S.downPct+'%'],['rMonthly',(p-dn)/S.months,`× ${S.months}`]],total:p};}
+ const inst=(rest,m)=>{const k=Math.min(m,Math.floor(rest/S.monthly));return [k,S.monthly,rest-k*S.monthly];};
+ if(plan==='A'){const a=p*.5,[k,mo,fin]=inst(p-a,S.offerMonths);const r=[['rToday',a,'50%'],['rUntil',0,'0%'],['rAfter',mo,`× ${k}`]];if(fin>0)r.push(['rFinal',fin,'']);return {rows:r,total:p};}
+ if(plan==='B'){const dn=p*S.downPct/100,[k,mo,fin]=inst(p-dn,S.months);const r=[['rDown',dn,S.downPct+'%'],['rMonthly',mo,`× ${k}`]];if(fin>0)r.push(['rFinal',fin,'']);return {rows:r,total:p};}
  const disc=p*(S.fullDiscount||0)/100;const r=[['rOnce',p-disc,'100%']];if(disc>0)r.push(['rDisc',disc,'−'+S.fullDiscount+'%']);return {rows:r,total:p-disc};
 }
 function offerAvail(u){return SET.offerOn&&SET.offerLeft>0&&(!u||u.status==='free');}
@@ -1218,7 +1231,7 @@ function renderDrawer(){
  <div class="kv"><div><b>${fA(ty.total)}<small>${t('uM2')}</small></b><span>${t('aTotal')}</span></div><div><b>${fA(ty.interior)}<small>${t('uM2')}</small></b><span>${t('aInt')}</span></div><div><b>${fA(ty.balcony)}<small>${t('uM2')}</small></b><span>${t('aBal')}</span></div></div>
  <div class="rooms">${ty.rooms.map(r=>`<div><span>${t(r[0])}</span><b style="font-weight:400">${fA(r[1].toFixed(1))} ${t('uM2')}</b></div>`).join('')}</div>
  <div class="feat"><span>${t('fe1')}</span><span>${t('fe2')}</span><span>${t('fe5')}</span><span>${t('fe3')}</span><span>${t('fe4')}</span></div>
- <div class="dr-pay"><div class="price"><span>${t('price')}</span><b class="${lk?'lk':''}">${lk?'$000,000':fmt(u.price)}</b></div>
+ <div class="dr-pay">${lk?'':curSw()}<div class="price"><span>${t('price')}</span><b class="${lk?'lk':''}">${lk?'$000,000':fmt(u.price)}</b></div>
   <div class="mini">${pa?`<div><b>50%</b><span>${t('miniA')}</span><i class="${lk?'lk':''}">${lk?'$00,000':fmt(pa.rows[0][1])}</i></div>`:`<div style="opacity:.5"><b>50%</b><span>${t('offerOff')}</span></div>`}<div><b>0%</b><span>${SET.downPct}% + ${SET.months} ${t('mo')}</span><i class="${lk?'lk':''}">${lk?'$0,000':fmt(pb.rows[1][1])+' / '+t('mo')}</i></div><div><b>100%</b><span>${t('plC')}</span><i class="${lk?'lk':''}">${lk?'$000,000':fmt(pc.total)}</i></div></div>
   ${lk?`<button class="btn btn-p" style="width:100%;margin-top:16px" data-lead="unit">${t('lockB')}</button>`:''}
  </div>
@@ -1276,13 +1289,13 @@ function renderCalc(){
  $$('#cTabs button').forEach(b=>{b.classList.toggle('on',b.dataset.p===calc.plan);b.disabled=b.dataset.p==='A'&&!offerAvail(u);});
  $('#cUnitInfo').innerHTML=`${t('ty_'+u.type)} · ${ROMAN[u.floor]} ${t('floor')} · ${fA(ty.total)} ${t('uM2')} (${fA(ty.interior)} + ${fA(ty.balcony)}) · <span class="st ${u.status}">${t(stKey(u.status))}</span>`;
  const lk=!UNLOCK||!u.price;const n=payNums(u,calc.plan);
- $('#cRes').classList.toggle('locked',lk);
+ $('#cRes').classList.toggle('locked',lk);$('#cCur').innerHTML=lk?'':curSw();
  $('#cRows').innerHTML=n.rows.map(r=>`<div class="rw"><span>${t(r[0])} <small style="color:var(--ink3)">${r[2]}</small></span><b class="m">${lk?(r[1]===0?'$0':'$00,000'):fmt(r[1])}${r[0]==='rAfter'||r[0]==='rMonthly'?`<small>/ ${t('mo')}</small>`:''}</b></div>`).join('');
  $('#cTotal').textContent=lk?'$000,000':fmt(n.total);
  // timeline
  let segs,lbl;
  if(calc.plan==='A'){segs=[[50,'var(--man)'],[22,'var(--line2)'],[28,'var(--euc)']];lbl=[t('tlNow')+' · 50%',t('tlJan')+' · 0',`+${SET.offerMonths} ${t('mo')} · 50%`];}
- else if(calc.plan==='B'){segs=[[SET.downPct,'var(--man)'],[100-SET.downPct,'var(--euc)']];lbl=[t('tlNow')+' · '+SET.downPct+'%',`${SET.months} × ${(((100-SET.downPct)/SET.months)).toFixed(1)}%`,`+${SET.months} ${t('mo')}`];}
+ else if(calc.plan==='B'){segs=[[SET.downPct,'var(--man)'],[100-SET.downPct,'var(--euc)']];lbl=[t('tlNow')+' · '+SET.downPct+'%',`${SET.months} × ${fmt(SET.monthly)}`,`+${SET.months} ${t('mo')} · ${t('rFinal')}`];}
  else {segs=[[100,'var(--man)']];lbl=[t('tlNow')+' · 100%','',''];}
  $('#cTl').innerHTML=`<div class="bar">${segs.map(s=>`<i style="flex:${s[0]};background:${s[1]}"></i>`).join('')}</div><div class="lbls">${lbl.map(l=>`<span>${l}</span>`).join('')}</div>`;
 }
@@ -1373,7 +1386,7 @@ window.V3={};window.UNITS=UNITS;window.t=t;window.TOD=TOD;window.selectFloor=sel
 /* ============ GOOGLE SHEETS ============ */
 (async()=>{
  try{const cp=JSON.parse(localStorage.getItem('gonio_prices')||'null');if(cp&&UNLOCK)Object.entries(cp).forEach(([id,v])=>{const u=U(id);if(u)u.price=v;});}catch(e){}
- applyPrices();
+ applyPrices();loadRate();
  if(!SHEET_URL){renderAll();return;}
  try{const r=await fetch(SHEET_URL+'?a=state');const j=await r.json();
   (j.units||[]).forEach(x=>{const u=U(x.id);if(u&&x.status)u.status=x.status;});
