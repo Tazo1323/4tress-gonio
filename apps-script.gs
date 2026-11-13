@@ -20,14 +20,13 @@ function setup() {
   let s = ss.getSheetByName('პარამეტრები') || ss.insertSheet('პარამეტრები');
   s.clear();
   [['პარამეტრი','მნიშვნელობა','აღწერა'],
-   ['offerOn',true,'50%-იანი შეთავაზება ჩართულია (TRUE/FALSE)'],
-   ['offerLeft',4,'50%-იანი შეთავაზებიდან დარჩენილი ბინები'],
-   ['offerTotal',4,'50%-იანი შეთავაზების ბინები სულ'],
-   ['renoM',6,'50% — რემონტის პერიოდი (გადასახადის გარეშე), თვე'],
-   ['monthly',1500,'ყოველთვიური გადასახადი მაქს. $'],
-   ['downPct',30,'0% განვადება — პირველადი შენატანი %'],
-   ['months',24,'განვადების მთლიანი ვადა, თვე'],
-   ['fullDiscount',0,'სრული გადახდის ფასდაკლება %']].forEach(r => s.appendRow(r));
+   ['downPct',30,'30·30·40 — პირველადი შენატანი %'],
+   ['instPct',30,'30·30·40 — უპროცენტო განვადების წილი %'],
+   ['finalPct',40,'30·30·40 — ბოლო გადახდა %'],
+   ['instM',23,'30·30·40 — ყოველთვიური შენატანების რაოდენობა'],
+   ['multiDisc',2,'30·30·40 — ფასდაკლება ერთზე მეტი ბინის შეძენისას %'],
+   ['halfDisc',4,'50·50 — ფასდაკლება %'],
+   ['fullDisc',8,'100% — ფასდაკლება %']].forEach(r => s.appendRow(r));
   s.setFrozenRows(1); s.getRange('A1:C1').setFontWeight('bold');
   let l = ss.getSheetByName('ლიდები') || ss.insertSheet('ლიდები');
   if (l.getLastRow() === 0) { l.appendRow(['თარიღი','სახელი','ტელეფონი','წყარო','ბინა','გეგმა','თემა','კომენტარი','ენა','თანხმობა','WhatsApp მარკეტინგი','თანხმობის დრო']); l.setFrozenRows(1); l.getRange('A1:L1').setFontWeight('bold'); }
@@ -71,4 +70,19 @@ function updatePricesNov2026() {
   const v = sh.getRange(2, 1, 28, 6).getValues();
   v.forEach(r => { if (P[r[0]]) { r[5] = P[r[0]]; r[4] = R.indexOf(r[0]) > -1 ? 'reserved' : 'free'; } });
   sh.getRange(2, 1, 28, 6).setValues(v);
+}
+
+// Payment terms — November 2026 price list
+function updateTermsNov2026() {
+  const s = book_().getSheetByName('პარამეტრები');
+  s.clear();
+  [['პარამეტრი','მნიშვნელობა','აღწერა'],
+   ['downPct',30,'30·30·40 — პირველადი შენატანი %'],
+   ['instPct',30,'30·30·40 — უპროცენტო განვადების წილი %'],
+   ['finalPct',40,'30·30·40 — ბოლო გადახდა %'],
+   ['instM',23,'30·30·40 — ყოველთვიური შენატანების რაოდენობა'],
+   ['multiDisc',2,'30·30·40 — ფასდაკლება ერთზე მეტი ბინის შეძენისას %'],
+   ['halfDisc',4,'50·50 — ფასდაკლება %'],
+   ['fullDisc',8,'100% — ფასდაკლება %']].forEach(r => s.appendRow(r));
+  s.setFrozenRows(1); s.getRange('A1:C1').setFontWeight('bold');
 }

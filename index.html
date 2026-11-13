@@ -519,6 +519,7 @@ footer .bot button{color:inherit;font-size:13px}
 .mbox .x{position:absolute;top:18px;right:18px}
 .err{color:#c0392b;font-size:13px;margin-top:-12px;margin-bottom:12px;display:none}
 .err.show{display:block}
+.calc>*{min-width:0}#cUnit{min-width:0;width:100%;max-width:100%;text-overflow:ellipsis}
 .cur{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 .cur small{font-size:12px;color:var(--ink3)}
 .cs{display:inline-flex;border:1px solid var(--line2);border-radius:99px;padding:3px;gap:2px}
@@ -723,7 +724,8 @@ loadPixel();
    <div class="cbox">
     <h3 style="margin-bottom:24px" data-i="calcH"></h3>
     <div class="field"><label data-i="calcUnit" for="cUnit"></label><select id="cUnit"></select></div>
-    <div class="field"><label data-i="calcPlan"></label><div class="tabs" id="cTabs"><button data-p="A">50 / 50</button><button data-p="B">0% · 24</button><button data-p="C">100%</button></div></div>
+    <div class="field"><label data-i="calcPlan"></label><div class="tabs" id="cTabs"><button data-p="A">50 / 50</button><button data-p="B">30 · 30 · 40</button><button data-p="C">100%</button></div></div>
+    <label class="chk" id="cMultiW" style="margin:-4px 0 0"><input type="checkbox" id="cMulti"><span data-i="multi"></span></label>
     <div id="cUnitInfo" style="font-size:14px;color:var(--ink2)"></div>
    </div>
    <div class="cbox res locked" id="cRes">
@@ -889,9 +891,8 @@ for(let f=1;f<=8;f++){
  if(f<=6){for(let p=1;p<=4;p++)UNITS.push({id:'N'+((f-1)*4+p),n:(f-1)*4+p,floor:f,pos:p,type:(p===1||p===4)?'corner':'inner',status:['N2','N3','N7'].includes('N'+((f-1)*4+p))?'reserved':'free',price:null});}
  else{for(let p=1;p<=2;p++)UNITS.push({id:'N'+(24+(f-7)*2+p),n:24+(f-7)*2+p,floor:f,pos:p,type:'pent',status:'free',price:null});}
 }
-const SET={offerOn:true,offerLeft:4,offerTotal:4,offerMonths:24,downPct:30,months:24,fullDiscount:0,monthly:1500,renoM:6};
-/* plan A: 0 during renovation (~6 months), then instalments for the rest of the 24-month term */
-function aMonths(){return Math.max(1,SET.months-SET.renoM);}
+const SET={downPct:30,instPct:30,finalPct:40,instM:23,multiDisc:2,halfDisc:4,fullDisc:8};
+
 const GAL=['n-sea','i52-living','n-mount','i49-bed','c-balsea','i52-kitchen','n-front','i52-bed','c-roof','i49-living','x-tall','i52-sofa','c-person','i52-bath','c-entrance','i49-bath','c-corner','d-kitchen','c-junction','d-pillow','c-glass'];
 
 /* ============ I18N ============ */
@@ -910,7 +911,7 @@ heroP:['8-სართულიანი ბუტიკური სახლ�
 ctaChoose:['აირჩიეთ ბინა','Choose a residence','Выбрать квартиру'],ctaPay:['გადახდის პირობები','Payment options','Условия оплаты'],
 miniA:['ნახევარი ახლა','Half now','Половина сейчас'],legal:['დეველოპერი: შპს „გეობილდი“ · ს/კ 405086115 · იურიდიული მისამართი: თბილისი, ვაკის რაიონი, დაბა წყნეთი, მიხეილ ჯავახიშვილის II ჩიხი, N9','Developer: Geobuild LLC · ID 405086115 · Legal address: Georgia, Tbilisi, Vake district, Tskneti township, Mikheil Javakhishvili II alley, N9','Застройщик: ООО «Геобилди» · ИК 405086115 · Юридический адрес: Грузия, Тбилиси, Ваке, пос. Цхнети, II тупик Михаила Джавахишвили, N9'],swipe:['გადაფურცლეთ','Swipe','Листайте'],partner:['პარტნიორი','Partner','Партнёр'],meta1:['პროექტი დაფინანსებულია TBC ბანკის მიერ','The project is financed by TBC Bank','Проект финансируется TBC Bank'],
 meta2:['ჩაბარება — <b>2027 წლის დეკემბერი</b>','Completion — <b>December 2027</b>','Сдача — <b>декабрь 2027</b>'],
-meta3:['<b>0%</b> შიდა განვადება 24 თვით','<b>0%</b> in-house instalments, 24 months','Рассрочка <b>0%</b> от застройщика на 24 месяца'],
+meta3:['<b>0%</b> შიდა განვადება 23 თვით','<b>0%</b> in-house instalments, 23 months','Рассрочка <b>0%</b> от застройщика на 23 месяца'],
 cOver:['კონცეფცია','The idea','Концепция'],
 cH:['სახლი, სადაც მეზობლებს სახელით იცნობ.','A house where you know your neighbours by name.','Дом, где соседей знаешь по имени.'],
 cP:['4Tress Gonio ჩაფიქრებულია, როგორც მცირე და მშვიდი სახლი: 28 ბინა რვა სართულზე, თითო სართულზე — ოთხი. ნაკლები კარი დერეფანში, ნაკლები ხმაური ლიფტში — მეტი სივრცე, ჰაერი და სინათლე თითოეული ბინისთვის.','4Tress Gonio is conceived as a small, quiet house: 28 homes over eight floors, four on each. Fewer doors in the corridor, less noise in the lift — more space, air and light for every apartment.','4Tress Gonio задуман как небольшой спокойный дом: 28 квартир на восьми этажах, по четыре на каждом. Меньше дверей в коридоре, меньше шума в лифте — больше пространства, воздуха и света для каждой квартиры.'],
@@ -942,15 +943,15 @@ payOver:['გადახდა','Payment','Оплата'],payH:['გადა�
 plD:['ინდივიდუალური პირობების შეთანხმება','Individually agreed terms','Индивидуальные условия'],plDs:['პერსონალური მენეჯერი','personal manager','персональный менеджер'],
 plDp:['გრაფიკს, შენატანებსა და ვადებს პერსონალური მენეჯერი შეგითანხმებთ — თქვენს შესაძლებლობებსა და გეგმებზე მორგებით.','A personal manager will agree the schedule, instalments and timing with you — shaped around your means and plans.','Персональный менеджер согласует с вами график, взносы и сроки — с учётом ваших возможностей и планов.'],
 payP:['ბანკის პროცენტის გარეშე — პირდაპირ დეველოპერთან. აირჩიეთ გეგმა, ნახეთ გრაფიკი, ან შეგვითანხმეთ ინდივიდუალური პირობები.','No bank interest — directly with the developer. Choose a plan, see the schedule, or agree personal terms with us.','Без банковских процентов — напрямую с застройщиком. Выберите план, посмотрите график или согласуйте индивидуальные условия.'],
-plAs:['ახლა · რემონტის დასრულებამდე — არაფერი','now · nothing until the renovation is done','сейчас · до конца ремонта — ничего'],plBs:['პროცენტის გარეშე','no interest','без процентов'],plCs:['ერთიანი გადახდა','single payment','единовременно'],plA:['ნახევარი ახლა, ნახევარი — ჩაბარების შემდეგ','Half now, half after handover','Половина сейчас, половина после сдачи'],
-plAp:['იხდით ღირებულების ნახევარს და სანამ ბინას გარემონტებულს ჩაიბარებთ, მეტს არაფერს. შემდეგ 2-წლიანი ვადის დარჩენილ თვეებში იხდით თვეში $1,500-მდე, ნაშთს კი ბოლოს ფარავთ.','Pay half the price and nothing more until you receive the renovated home. Then, for the rest of the 2-year term, pay up to $1,500 a month and settle the balance at the end.','Вы платите половину стоимости и больше ничего, пока не получите квартиру с ремонтом. Затем до конца 2-летнего срока — до $1,500 в месяц, а остаток погашаете в конце.'],
-plAl1:['მხოლოდ პირველი 4 ბინისთვის','For the first 4 homes only','Только для первых 4 квартир'],plAl2:['0 გადასახადი, სანამ ბინას გარემონტებულს ჩაიბარებთ','No payments until you receive the renovated home','Ноль платежей, пока вы не получите квартиру с ремонтом'],
-plB:['0%-იანი შიდა განვადება','0% in-house instalments','Рассрочка 0% от застройщика'],
-plBp:['პირველადი შენატანი, შემდეგ ყოველთვიურად $1,500, დარჩენილ თანხას კი ბოლოს ერთიანად ფარავთ. პროცენტისა და ბანკის გარეშე.','A down payment, then $1,500 a month, with the balance paid in one final payment. No interest, no bank.','Первый взнос, затем $1,500 в месяц, а остаток — одним последним платежом. Без процентов и без банка.'],
-plBl1:['ხელმისაწვდომია ყველა ბინაზე','Available on every home','Доступно для всех квартир'],plBl2:['ფიქსირებული ყოველთვიური გადასახადი: $1,500','Fixed monthly payment: $1,500','Фиксированный ежемесячный платёж: $1,500'],
+plAs:['ჩაბარებამდე — არაფერი','nothing until handover','до сдачи — ничего'],plBs:['პროცენტის გარეშე','no interest','без процентов'],plCs:['ერთიანი გადახდა','single payment','единовременно'],plA:['ნახევარი ახლა, ნახევარი — ჩაბარებისას','Half now, half at handover','Половина сейчас, половина при сдаче'],
+plAp:['იხდით ღირებულების ნახევარს. სანამ ბინას გარემონტებულს ჩაიბარებთ, მეტს არაფერს იხდით — დარჩენილ 50%-ს ფარავთ ჩაბარებისას.','Pay half the price now. Nothing more until you receive the finished home — the remaining 50% is paid at handover.','Вы платите половину стоимости. До получения квартиры с ремонтом — больше ничего; оставшиеся 50% — при сдаче.'],
+plAl1:['4% ფასდაკლება','4% discount','Скидка 4%'],plAl2:['0 გადასახადი, სანამ ბინას გარემონტებულს ჩაიბარებთ','No payments until you receive the finished home','Ноль платежей до получения квартиры с ремонтом'],
+plB:['უპროცენტო შიდა განვადება','Interest-free in-house instalments','Беспроцентная рассрочка от застройщика'],
+plBp:['30% პირველადი შენატანი, 30% — უპროცენტო განვადებით 23 თვეზე, დარჩენილი 40% — ბოლო გადახდით. ბანკის გარეშე, პირდაპირ დეველოპერთან.','30% down payment, 30% in interest-free instalments over 23 months, and the remaining 40% as a final payment. No bank — directly with the developer.','30% первый взнос, 30% — беспроцентная рассрочка на 23 месяца, оставшиеся 40% — последним платежом. Без банка, напрямую застройщику.'],
+plBl1:['30% — 23 თანაბარ ყოველთვიურ შენატანად','30% in 23 equal monthly payments','30% — 23 равных ежемесячных платежа'],plBl2:['ერთზე მეტი ბინის შეძენისას — 2% ფასდაკლება','Buying more than one home — 2% discount','При покупке более одной квартиры — скидка 2%'],
 plC:['სრული გადახდა','Full payment','Полная оплата'],
-plCp:['სრული გადახდისას გთავაზობთ სპეციალურ პირობებს — დეტალებს პერსონალური მენეჯერი შეგითანხმებთ.','Pay in full and get special terms — your personal manager will agree the details with you.','При полной оплате — специальные условия. Детали согласует ваш персональный менеджер.'],
-plCl1:['სპეციალური პირობები 100%-იან გადახდაზე','Special terms for 100% payment','Специальные условия при оплате 100%'],plCl2:['ჯავშანი — მენეჯერთან ერთად','Reserve with a manager','Бронь через менеджера'],
+plCp:['ერთიანი გადახდისას ბინის ფასი 8%-ით მცირდება.','Pay in one go and the price drops by 8%.','При единовременной оплате цена снижается на 8%.'],
+plCl1:['8% ფასდაკლება','8% discount','Скидка 8%'],plCl2:['ჯავშანი — მენეჯერთან ერთად','Reserve with a manager','Бронь через менеджера'],
 left:['დარჩა','left','осталось'],months:['თვე','months','мес.'],mo:['თვე','mo','мес.'],downPay:['პირველადი შენატანი','down payment','первый взнос'],
 calcH:['გადახდის კალკულატორი','Payment calculator','Калькулятор оплаты'],calcUnit:['ბინა','Home','Квартира'],calcPlan:['გადახდის გეგმა','Payment plan','План оплаты'],
 calcTotal:['ბინის ღირებულება','Price of the home','Стоимость квартиры'],
@@ -958,10 +959,14 @@ lockP:['შეიყვანეთ თქვენი ნომერი და
 lockB:['ფასის ნახვა','Show prices','Показать цены'],
 calcNote:['გაანგარიშება საორიენტაციოა. საბოლოო პირობები ფიქსირდება ხელშეკრულებით.','The calculation is indicative. Final terms are fixed in the contract.','Расчёт ориентировочный. Окончательные условия фиксируются в договоре.'],
 cond:['მდგომარეობა','Condition','Состояние'],fullFin:['სრული რემონტით, ავეჯითა და ტექნიკით','fully finished and furnished, with appliances','с полным ремонтом, мебелью и техникой'],
-plAl3:['შემდეგ — თვეში $1,500-მდე, ნაშთი ბოლოს','Then up to $1,500 a month, balance at the end','Затем до $1,500 в месяц, остаток в конце'],
-rFinal:['ბოლო გადახდა (ნაშთი)','Final payment (balance)','Последний платёж (остаток)'],rateN:['ეროვნული ბანკის კურსი','National Bank of Georgia rate','Курс Нацбанка Грузии'],
-rToday:['დღეს','Today','Сегодня'],rUntil:['რემონტის დასრულებამდე (დაახლ. 6 თვე)','Until the renovation is done (about 6 months)','До завершения ремонта (около 6 месяцев)'],rAfter:['შემდეგ, ყოველთვიურად','Then, monthly','Затем ежемесячно'],rDown:['პირველადი შენატანი','Down payment','Первый взнос'],rMonthly:['ყოველთვიურად','Monthly','Ежемесячно'],rOnce:['ერთიანი გადახდა','Single payment','Единовременно'],rDisc:['ფასდაკლება','Discount','Скидка'],
-tlNow:['დღეს','Today','Сегодня'],tlJan:['რემონტი · დაახლ. 6 თვე','Renovation · about 6 months','Ремонт · около 6 месяцев'],
+plAl3:['დარჩენილი 50% — ბინის ჩაბარებისას','Remaining 50% at handover','Оставшиеся 50% — при сдаче'],
+rFinal:['ბოლო გადახდა','Final payment','Последний платёж'],rateN:['ეროვნული ბანკის კურსი','National Bank of Georgia rate','Курс Нацбанка Грузии'],
+rHand:['ბინის ჩაბარებისას','At handover','При сдаче'],
+tlHand:['ჩაბარება','Handover','Сдача'],
+tlEnd:['ბოლოს','Final','В конце'],
+multi:['ვყიდულობ ერთზე მეტ ბინას (−2%)','I am buying more than one home (−2%)','Покупаю более одной квартиры (−2%)'],
+rToday:['დღეს','Today','Сегодня'],rUntil:['ჩაბარებამდე','Until handover','До сдачи'],rAfter:['შემდეგ, ყოველთვიურად','Then, monthly','Затем ежемесячно'],rDown:['პირველადი შენატანი','Down payment','Первый взнос'],rMonthly:['ყოველთვიურად','Monthly','Ежемесячно'],rOnce:['ერთიანი გადახდა','Single payment','Единовременно'],rDisc:['ფასდაკლება','Discount','Скидка'],
+tlNow:['დღეს','Today','Сегодня'],tlJan:['რემონტი','Renovation','Ремонт'],
 offerOff:['შეთავაზება ამოიწურა','Offer no longer available','Предложение закончилось'],
 indH:['გჭირდებათ სხვა გრაფიკი?','Need a different schedule?','Нужен другой график?'],
 indP:['პერსონალური მენეჯერი შეგიდგენთ ინდივიდუალურ გრაფიკს თქვენს შემოსავალსა და გეგმებზე მორგებით.','A personal manager will build a schedule around your income and plans.','Персональный менеджер составит индивидуальный график под ваш доход и планы.'],
@@ -989,8 +994,8 @@ t3k:['ჩაბარება','Handover','Сдача'],t3:['სრული �
 fOver:['კითხვები','Questions','Вопросы'],fH:['ხშირად გვეკითხებიან.','What people ask.','Частые вопросы.'],
 q1:['როდის ბარდება სახლი?','When is the handover?','Когда сдача дома?'],a1:['2027 წლის დეკემბერში. ყველა ბინა ბარდება სრული რემონტით, ავეჯითა და ტექნიკით.','In December 2027. Every home is delivered fully finished, with furniture and appliances.','В декабре 2027 года. Все квартиры сдаются с полным ремонтом, мебелью и техникой.'],
 q2:['შედის თუ არა ავეჯი და ტექნიკა?','Are furniture and appliances included?','Входят ли мебель и техника?'],a2:['დიახ. ბინა ბარდება სრული რემონტით, ავეჯითა და ტექნიკით — ფასში ყველაფერი შედის.','Yes. The home is delivered fully finished, with furniture and appliances — all included in the price.','Да. Квартира сдаётся с полным ремонтом, мебелью и техникой — всё входит в цену.'],
-q3:['როგორ მუშაობს 0%-იანი განვადება?','How do the 0% instalments work?','Как работает рассрочка 0%?'],a3:['იხდით პირველად შენატანს, შემდეგ 24 თვის განმავლობაში ყოველთვიურად $1,500-ს, დარჩენილ თანხას კი ბოლოს ერთიანად ფარავთ. პროცენტისა და ბანკის გარეშე, პირდაპირ დეველოპერთან.','You make a down payment, then pay $1,500 a month for 24 months and settle the balance in one final payment — no interest, no bank, directly with the developer.','Вы вносите первый взнос, затем 24 месяца платите по $1,500, а остаток погашаете последним платежом — без процентов и без банка, напрямую застройщику.'],
-q4:['რა არის 50%-იანი შეთავაზება?','What is the 50% offer?','Что за предложение 50%?'],a4:['იხდით ღირებულების 50%-ს და სანამ ბინას გარემონტებულს ჩაიბარებთ (დაახლოებით 6 თვე), მეტს არაფერს. ჩაბარების შემდეგ 0%-იან შიდა განვადებას აგრძელებთ თვეში $1,500-მდე, 2-წლიანი ვადის ბოლომდე, დარჩენილ თანხას კი ბოლოს ფარავთ. მაგალითად: 6 თვე — 0, შემდეგ 18 თვე — $1,500-მდე. შეთავაზება ვრცელდება მხოლოდ პირველ 4 ბინაზე.','You pay 50% of the price and nothing more until you receive the renovated home (about 6 months). After that you continue with 0% in-house instalments of up to $1,500 a month until the end of the 2-year term, and settle the balance at the end. For example: 6 months — nothing, then 18 months — up to $1,500. The offer applies to the first 4 homes only.','Вы платите 50% стоимости и больше ничего, пока не получите квартиру с ремонтом (около 6 месяцев). Затем продолжаете рассрочку 0% — до $1,500 в месяц до конца 2-летнего срока, а остаток погашаете в конце. Например: 6 месяцев — ничего, затем 18 месяцев — до $1,500. Предложение действует только для первых 4 квартир.'],
+q3:['როგორ მუშაობს უპროცენტო განვადება?','How do the interest-free instalments work?','Как работает беспроцентная рассрочка?'],a3:['30% — პირველადი შენატანი, 30% — 23 თანაბარი ყოველთვიური შენატანი, დარჩენილი 40% — ბოლო გადახდა. პროცენტისა და ბანკის გარეშე. ერთზე მეტი ბინის შეძენისას — 2% ფასდაკლება.','30% down payment, 30% in 23 equal monthly payments, and the remaining 40% as a final payment. No interest, no bank. Buying more than one home — 2% off.','30% — первый взнос, 30% — 23 равных ежемесячных платежа, оставшиеся 40% — последний платёж. Без процентов и банка. При покупке более одной квартиры — скидка 2%.'],
+q4:['როგორ მუშაობს 50 / 50?','How does 50 / 50 work?','Как работает 50 / 50?'],a4:['იხდით ღირებულების 50%-ს და სანამ ბინას გარემონტებულს ჩაიბარებთ, მეტს არაფერს. დარჩენილ 50%-ს ფარავთ ჩაბარებისას. ამ პირობით ბინის ფასი 4%-ით მცირდება.','You pay 50% of the price and nothing more until you receive the finished home. The remaining 50% is paid at handover. With this plan the price drops by 4%.','Вы платите 50% стоимости и больше ничего до получения квартиры с ремонтом. Оставшиеся 50% — при сдаче. При этом цена снижается на 4%.'],
 q5:['ვინ სარგებლობს აუზით?','Who can use the pool?','Кто пользуется бассейном?'],a5:['სახურავის აუზი და ტერასა სახლის ყველა მცხოვრების საერთო სივრცეა.','The rooftop pool and terrace are shared by all residents of the house.','Бассейн и терраса на крыше — общее пространство для всех жильцов дома.'],
 q6:['შემიძლია ობიექტის ნახვა?','Can I visit the site?','Можно посмотреть объект?'],a6:['დიახ. დაგვიკავშირდით 11:00–19:00 საათებში და მენეჯერი დაგეგმავს ვიზიტს.','Yes. Contact us between 11:00 and 19:00 and a manager will arrange a visit.','Да. Свяжитесь с нами с 11:00 до 19:00, и менеджер организует визит.'],
 ctOver:['დაგვიკავშირდით','Get in touch','Свяжитесь с нами'],copy:['ნომრის კოპირება','Copy number','Скопировать номер'],copied:['ნომერი დაკოპირდა','Number copied','Номер скопирован'],
@@ -1219,12 +1224,11 @@ function planSvg(u){const pl=u.type==='pent'?'pent':'typ',G=POLY[pl];const other
  return `<div class="plan"><img src="a/plan-${pl}.webp" alt="" width="${G.w}" height="${G.h}"><svg viewBox="0 0 ${G.w} ${G.h}">${others.map(o=>`<polygon points="${G.p[o.pos].map(p=>p.join(',')).join(' ')}" fill="#F5F1E8" fill-opacity=".78"/>`).join('')}<polygon points="${G.p[u.pos].map(p=>p.join(',')).join(' ')}" fill="#7FA08A" fill-opacity=".14" stroke="#1F3B2D" stroke-width="7"/></svg></div>`;}
 function payNums(u,plan){
  const p=u.price||0,S=SET;
- const inst=(rest,m)=>{const mo=Math.min(S.monthly,rest/m);const k=Math.min(m,Math.floor(rest/mo+1e-9));return [k,mo,Math.max(0,rest-k*mo)];};
- if(plan==='A'){const a=p*.5,[k,mo,fin]=inst(p-a,aMonths());const r=[['rToday',a,'50%'],['rUntil',0,'0%'],['rAfter',mo,`× ${k}`]];if(fin>0)r.push(['rFinal',fin,'']);return {rows:r,total:p};}
- if(plan==='B'){const dn=p*S.downPct/100,[k,mo,fin]=inst(p-dn,S.months);const r=[['rDown',dn,S.downPct+'%'],['rMonthly',mo,`× ${k}`]];if(fin>0)r.push(['rFinal',fin,'']);return {rows:r,total:p};}
- const disc=p*(S.fullDiscount||0)/100;const r=[['rOnce',p-disc,'100%']];if(disc>0)r.push(['rDisc',disc,'−'+S.fullDiscount+'%']);return {rows:r,total:p-disc};
+ if(plan==='A'){const d=p*S.halfDisc/100,P=p-d;const r=[['rToday',P/2,'50%'],['rUntil',0,'0%'],['rHand',P/2,'50%']];if(d>0)r.push(['rDisc',d,'−'+S.halfDisc+'%']);return {rows:r,total:P};}
+ if(plan==='B'){const dp=calc.multi?S.multiDisc:0,d=p*dp/100,P=p-d;const r=[['rDown',P*S.downPct/100,S.downPct+'%'],['rMonthly',P*S.instPct/100/S.instM,`× ${S.instM}`],['rFinal',P*S.finalPct/100,S.finalPct+'%']];if(d>0)r.push(['rDisc',d,'−'+dp+'%']);return {rows:r,total:P};}
+ const d=p*S.fullDisc/100;const r=[['rOnce',p-d,'100%']];if(d>0)r.push(['rDisc',d,'−'+S.fullDisc+'%']);return {rows:r,total:p-d};
 }
-function offerAvail(u){return SET.offerOn&&SET.offerLeft>0&&(!u||u.status==='free');}
+function offerAvail(u){return !u||u.status!=='sold';}
 function renderDrawer(){
  const u=curUnit,ty=TYPES[u.type],lk=!UNLOCK||!u.price;
  $('#drCrumb').textContent=capT('apt')+' '+u.id+' · '+ROMAN[u.floor]+' '+(LANG==='ka'?MT(t('floor')):t('floor'));
@@ -1236,7 +1240,7 @@ function renderDrawer(){
  <div class="rooms">${ty.rooms.map(r=>`<div><span>${t(r[0])}</span><b style="font-weight:400">${fA(r[1].toFixed(1))} ${t('uM2')}</b></div>`).join('')}</div>
  <div class="feat"><span>${t('fe1')}</span><span>${t('fe2')}</span><span>${t('fe5')}</span><span>${t('fe3')}</span><span>${t('fe4')}</span></div>
  <div class="dr-pay">${lk?'':curSw()}<div class="price"><span>${t('price')}</span><b class="${lk?'lk':''}">${lk?'$000,000':fmt(u.price)}</b></div>
-  <div class="mini">${pa?`<div><b>50%</b><span>${t('miniA')}</span><i class="${lk?'lk':''}">${lk?'$00,000':fmt(pa.rows[0][1])}</i></div>`:`<div style="opacity:.5"><b>50%</b><span>${t('offerOff')}</span></div>`}<div><b>0%</b><span>${SET.downPct}% + ${SET.months} ${t('mo')}</span><i class="${lk?'lk':''}">${lk?'$0,000':fmt(pb.rows[1][1])+' / '+t('mo')}</i></div><div><b>100%</b><span>${t('plC')}</span><i class="${lk?'lk':''}">${lk?'$000,000':fmt(pc.total)}</i></div></div>
+  <div class="mini">${pa?`<div><b>50·50</b><span>−${SET.halfDisc}%</span><i class="${lk?'lk':''}">${lk?'$00,000':fmt(pa.rows[0][1])}</i></div>`:`<div style="opacity:.5"><b>50%</b><span>${t('offerOff')}</span></div>`}<div><b>30·30·40</b><span>0% · ${SET.instM} ${t('mo')}</span><i class="${lk?'lk':''}">${lk?'$0,000':fmt(pb.rows[1][1])+' / '+t('mo')}</i></div><div><b>100%</b><span>−${SET.fullDisc}%</span><i class="${lk?'lk':''}">${lk?'$000,000':fmt(pc.total)}</i></div></div>
   ${lk?`<button class="btn btn-p" style="width:100%;margin-top:16px" data-lead="unit">${t('lockB')}</button>`:''}
  </div>
  <div class="dr-cta"><a class="btn btn-p" href="${waLink('unit',u)}" target="_blank" rel="noopener">${t('dReq')}</a><button class="btn btn-g" id="toCalc">${t('dCalc')}</button></div>`;
@@ -1271,11 +1275,10 @@ function goType(k){const fs=[...new Set(UNITS.filter(u=>u.type===k).map(u=>u.flo
 /* ---- payment plans ---- */
 function planLabel(p){return t('planName')+': '+(p==='A'?t('plA'):p==='B'?t('plB'):t('plC'));}
 function renderPlans(){
- const A=SET.offerOn&&SET.offerLeft>0;
  $('#plans').innerHTML=`
- <div class="pc ${calc.plan==='A'?'on':''}" data-p="A" style="${A?'':'opacity:.55'}">${A?`<span class="badge">${t('left')} ${SET.offerLeft} / ${SET.offerTotal}</span>`:''}<div class="big">50%<small>${t('plAs')}</small></div><h3>${t('plA')}</h3><p>${t('plAp')}</p><ul><li>${A?t('plAl1'):t('offerOff')}</li><li>${t('plAl2')}</li><li>${t('plAl3')}</li></ul></div>
- <div class="pc ${calc.plan==='B'?'on':''}" data-p="B"><div class="big">0%<small>${SET.months} ${t('months')} · ${t('plBs')}</small></div><h3>${t('plB')}</h3><p>${t('plBp')}</p><ul><li>${t('downPay')}: ${SET.downPct}%</li><li>${t('plBl1')}</li><li>${t('plBl2')}</li></ul></div>
- <div class="pc ${calc.plan==='C'?'on':''}" data-p="C"><div class="big">100%<small>${SET.fullDiscount?'−'+SET.fullDiscount+'% · ':''}${t('plCs')}</small></div><h3>${t('plC')}</h3><p>${t('plCp')}</p><ul><li>${t('plCl1')}</li><li>${t('plCl2')}</li></ul></div>
+ <div class="pc ${calc.plan==='A'?'on':''}" data-p="A"><span class="badge">−${SET.halfDisc}%</span><div class="big">50 / 50<small>${t('plAs')}</small></div><h3>${t('plA')}</h3><p>${t('plAp')}</p><ul><li>${t('plAl1')}</li><li>${t('plAl2')}</li><li>${t('plAl3')}</li></ul></div>
+ <div class="pc ${calc.plan==='B'?'on':''}" data-p="B"><div class="big">30·30·40<small>0% · ${SET.instM} ${t('months')}</small></div><h3>${t('plB')}</h3><p>${t('plBp')}</p><ul><li>${t('downPay')}: ${SET.downPct}%</li><li>${t('plBl1')}</li><li>${t('plBl2')}</li></ul></div>
+ <div class="pc ${calc.plan==='C'?'on':''}" data-p="C"><span class="badge">−${SET.fullDisc}%</span><div class="big">100%<small>${t('plCs')}</small></div><h3>${t('plC')}</h3><p>${t('plCp')}</p><ul><li>${t('plCl1')}</li><li>${t('plCl2')}</li></ul></div>
  <div class="pc ind"><div class="big">1:1<small>${t('plDs')}</small></div><h3>${t('plD')}</h3><p>${t('plDp')}</p><div class="acts"><a class="btn btn-p" data-wa="schedule" target="_blank" rel="noopener" href="${waLink('schedule')}">${t('indB')}</a><button class="btn btn-l" data-lead="schedule">${t('indB2')}</button></div></div>`;
  bindLead($('#plans'));
  $$('#plans .pc[data-p]').forEach(c=>{c.style.cursor='pointer';c.onclick=()=>{if(c.dataset.p==='A'&&!offerAvail(U(calc.unit)))return;calc.plan=c.dataset.p;renderPlans();renderCalc();$('#cRes').scrollIntoView({behavior:'smooth',block:'center'});}});
@@ -1285,6 +1288,7 @@ function renderCalcSelect(){
  if(U(calc.unit)?.status==='sold')calc.unit=(UNITS.find(u=>u.status!=='sold')||UNITS[0]).id;
  s.value=calc.unit;
 }
+$('#cMulti').onchange=e=>{calc.multi=e.target.checked;renderCalc();};
 $('#cUnit').onchange=e=>{calc.unit=e.target.value;LS.set('gonio_unit',calc.unit);renderCalc();refreshWa();};
 $$('#cTabs button').forEach(b=>b.onclick=()=>{calc.plan=b.dataset.p;renderPlans();renderCalc();refreshWa();});
 function renderCalc(){
@@ -1292,14 +1296,15 @@ function renderCalc(){
  if(calc.plan==='A'&&!offerAvail(u))calc.plan='B';
  $$('#cTabs button').forEach(b=>{b.classList.toggle('on',b.dataset.p===calc.plan);b.disabled=b.dataset.p==='A'&&!offerAvail(u);});
  $('#cUnitInfo').innerHTML=`${t('ty_'+u.type)} · ${ROMAN[u.floor]} ${t('floor')} · ${fA(ty.total)} ${t('uM2')} (${fA(ty.interior)} + ${fA(ty.balcony)}) · ${t('fullFin')} · <span class="st ${u.status}">${t(stKey(u.status))}</span>`;
+ $('#cMultiW').style.display=calc.plan==='B'?'':'none';
  const lk=!UNLOCK||!u.price;const n=payNums(u,calc.plan);
  $('#cRes').classList.toggle('locked',lk);$('#cCur').innerHTML=lk?'':curSw();
  $('#cRows').innerHTML=n.rows.map(r=>`<div class="rw"><span>${t(r[0])} <small style="color:var(--ink3)">${r[2]}</small></span><b class="m">${lk?(r[1]===0?'$0':'$00,000'):fmt(r[1])}${r[0]==='rAfter'||r[0]==='rMonthly'?`<small>/ ${t('mo')}</small>`:''}</b></div>`).join('');
  $('#cTotal').textContent=lk?'$000,000':fmt(n.total);
  // timeline
  let segs,lbl;
- if(calc.plan==='A'){segs=[[50,'var(--man)'],[22,'var(--line2)'],[28,'var(--euc)']];lbl=[t('tlNow')+' · 50%',t('tlJan')+' · 0',`+${aMonths()} ${t('mo')} · ${t('rFinal')}`];}
- else if(calc.plan==='B'){segs=[[SET.downPct,'var(--man)'],[100-SET.downPct,'var(--euc)']];lbl=[t('tlNow')+' · '+SET.downPct+'%',`${SET.months} × ${fmt(SET.monthly)}`,`+${SET.months} ${t('mo')} · ${t('rFinal')}`];}
+ if(calc.plan==='A'){segs=[[50,'var(--man)'],[18,'var(--line2)'],[50,'var(--euc)']];lbl=[t('tlNow')+' · 50%',t('tlJan')+' · 0',t('tlHand')+' · 50%'];}
+ else if(calc.plan==='B'){segs=[[SET.downPct,'var(--man)'],[SET.instPct,'var(--euc)'],[SET.finalPct,'var(--line2)']];lbl=[t('tlNow')+' · '+SET.downPct+'%',`${SET.instM} ${t('mo')} · ${SET.instPct}%`,t('tlEnd')+' · '+SET.finalPct+'%'];}
  else {segs=[[100,'var(--man)']];lbl=[t('tlNow')+' · 100%','',''];}
  $('#cTl').innerHTML=`<div class="bar">${segs.map(s=>`<i style="flex:${s[0]};background:${s[1]}"></i>`).join('')}</div><div class="lbls">${lbl.map(l=>`<span>${l}</span>`).join('')}</div>`;
 }
