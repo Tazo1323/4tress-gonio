@@ -62,3 +62,13 @@ function doPost(e) {
   if (NOTIFY_EMAIL) try { MailApp.sendEmail(NOTIFY_EMAIL, '4Tress Gonio — ახალი ლიდი: ' + phone, [d.name, phone, d.ctx, d.unit, d.plan, d.topic, d.msg].filter(Boolean).join('\n')); } catch (err) {}
   return json_({ok: true, prices: prices_()});
 }
+
+// Price list update — November 2026 (4Tress-pricelist.xlsx)
+function updatePricesNov2026() {
+  const P = {N1:114668,N2:110608,N3:110608,N4:114668,N5:116246,N6:112096,N7:112096,N8:116246,N9:117824,N10:113584,N11:113584,N12:117824,N13:119402,N14:115072,N15:115072,N16:119402,N17:120980,N18:116560,N19:116560,N20:120980,N21:122558,N22:118048,N23:118048,N24:122558,N25:274860,N26:274860,N27:274860,N28:274860};
+  const R = ['N2','N3','N7'];
+  const sh = book_().getSheetByName('ბინები');
+  const v = sh.getRange(2, 1, 28, 6).getValues();
+  v.forEach(r => { if (P[r[0]]) { r[5] = P[r[0]]; r[4] = R.indexOf(r[0]) > -1 ? 'reserved' : 'free'; } });
+  sh.getRange(2, 1, 28, 6).setValues(v);
+}
